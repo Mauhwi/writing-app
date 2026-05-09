@@ -1,6 +1,7 @@
 <script setup>
 import { useForm } from '@inertiajs/vue3';
 import { usePage } from "@inertiajs/vue3";
+import { Link } from '@inertiajs/vue3';
 import { ref } from 'vue';
 
 const page  = usePage();
@@ -64,7 +65,11 @@ const undoDelete = () => {
     <div class="grid grid-cols-2 gap-4 mb-5">
       <div v-for="project in projects" :key="project.id" class="p-4 bg-white shadow rounded">
         <div class="project-header d-flex p-2 flex-row justify-content-between">
-          <h3 class="font-bold">{{ project.title }}</h3>
+          <h3 class="font-bold">
+            <Link :href="route('projects.show', { project: project.id })">
+            {{ project.title }}
+          </Link>
+          </h3>
             <button @click="deleteProject(project.id)">
               x
             </button>

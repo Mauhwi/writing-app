@@ -34,4 +34,20 @@ class ProjectController extends Controller
 
         return redirect()->back()->with('success', 'Project '.$project->title .' deleted.');
     }
+
+    public function show(Request $request, Project $project)
+    {
+        if ($project->user_id !== $request->user()->id) {
+            abort(403);
+        }
+
+        $project->load([
+            'parts',
+            'chapters'
+        ]);
+
+        return inertia('Projects/Show', [
+            'project' => $project
+        ]);
+    }
 }

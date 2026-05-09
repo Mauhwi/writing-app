@@ -20,10 +20,13 @@ Route::get('/dashboard', [DashboardController::class, 'index'])
     ->middleware(['auth', 'verified'])
     ->name('dashboard');
 
-Route::post('/dashboard', [ProjectController::class, 'make'])->name('projects.make');
+Route::post('/projects', [ProjectController::class, 'make'])->name('projects.make');
 
 Route::delete('/projects/{project}', [ProjectController::class, 'delete'])
     ->name('projects.delete');
+
+Route::get('/projects/{project}', [ProjectController::class, 'show'])
+    ->name('projects.show');
 
 Route::middleware('auth')->group(function () {
     Route::get('/profile', [ProfileController::class, 'edit'])->name('profile.edit');
