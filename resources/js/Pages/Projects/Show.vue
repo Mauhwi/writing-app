@@ -5,24 +5,21 @@ import { ref, computed } from 'vue';
 
 const page  = usePage();
 
-const props = defineProps({
-    project: Object,
-    parts: Array,
+const { project } = defineProps({
+  project: Object
+});
+
+const chaptersByPart = computed(() => {
+    return project.parts.map(part => {
+        return {
+            ...part,
+
+            chapters: project.chapters.filter(chapter =>
+                chapter.part_id === part.id
+            )
+        }
+    })
 })
-
-const cardSize = ref('medium')
-
-// const chaptersByPart = computed(() => {
-//     return project.parts.map(part => {
-//         return {
-//             ...part,
-
-//             chapters: project.chapters.filter(chapter =>
-//                 chapter.part_id === part.id
-//             )
-//         }
-//     })
-// })
 </script>
 
 <template>
