@@ -3,6 +3,11 @@ import { useForm } from '@inertiajs/vue3';
 import { usePage } from "@inertiajs/vue3";
 import { ref, computed } from 'vue';
 
+import ProjectHeader from '@/Components/Project/ProjectHeader.vue'
+import ProjectToolbar from '@/Components/Project/ProjectToolbar.vue'
+import PartSection from '@/Components/Project/PartSection.vue'
+import EmptyProject from '@/Components/Project/EmptyProject.vue'
+
 const page  = usePage();
 
 const { project } = defineProps({
@@ -20,19 +25,34 @@ const chaptersByPart = computed(() => {
         }
     })
 })
+
+const cardSize = ref('medium')
 </script>
 
 <template>
-  <div class="container">
-    <h2>{{ project.title }}</h2>
-    <div v-for="part in chaptersByPart" :key="part.id">
-      <h3>{{ part.title }}</h3>
-      <div
-          v-for="chapter in part.chapters"
-          :key="chapter.id"
-      >
-          {{ chapter.title }}
-      </div>
+    <div class="min-h-screen bg-zinc-950 text-zinc-100">
+
+        <div class="mx-auto max-w-7xl px-6 py-8 space-y-6">
+
+            <ProjectHeader :project="project" />
+
+            <ProjectToolbar v-model:cardSize="cardSize" />
+
+            <div
+                v-if="chaptersByPart.length"
+                class="space-y-8"
+            >
+                <PartSection
+                    v-for="part in chaptersByPart"
+                    :key="part.id"
+                    :part="part"
+                    :card-size="cardSize"
+                />
+            </div>
+
+            <EmptyProject v-else />
+
+        </div>
+
     </div>
-  </div>
 </template>

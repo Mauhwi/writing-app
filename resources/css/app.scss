@@ -1,0 +1,179 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer components {
+
+    .dashboard-panel {
+        @apply rounded-3xl border border-zinc-800/80;
+        @apply bg-zinc-900/80 backdrop-blur-xl;
+        @apply shadow-2xl shadow-black/20;
+    }
+
+    .primary-button {
+        @apply inline-flex items-center justify-center;
+        @apply rounded-2xl px-5 py-3;
+        @apply bg-violet-600 hover:bg-violet-500;
+        @apply text-sm font-medium text-white;
+        @apply transition-all duration-200;
+    }
+
+    .secondary-button {
+        @apply inline-flex items-center justify-center;
+        @apply rounded-2xl px-5 py-3;
+        @apply border border-zinc-700;
+        @apply bg-zinc-800 hover:bg-zinc-700;
+        @apply text-sm font-medium text-zinc-200;
+        @apply transition-all duration-200;
+    }
+
+    .search-input {
+        @apply w-72 rounded-2xl border border-zinc-700;
+        @apply bg-zinc-800/80 px-4 py-3;
+        @apply text-sm text-zinc-100;
+        @apply placeholder:text-zinc-500;
+        @apply outline-none;
+        @apply focus:border-violet-500;
+    }
+
+    .toolbar-select {
+        @apply rounded-2xl border border-zinc-700;
+        @apply bg-zinc-800/80 px-4 py-3;
+        @apply text-sm text-zinc-200;
+    }
+
+    .size-toggle-button {
+        @apply rounded-2xl px-4 py-2.5;
+        @apply text-sm font-medium text-zinc-400;
+        @apply transition-all duration-200;
+        @apply hover:bg-zinc-800;
+    }
+
+    .size-toggle-button-active {
+        @apply bg-violet-600 text-white;
+    }
+
+    .chapter-grid {
+        display: grid;
+        grid-template-columns:
+            repeat(auto-fill, minmax(280px, 1fr));
+
+        gap: 1.25rem;
+    }
+
+    .chapter-card {
+        @apply relative flex flex-col;
+        @apply min-h-[260px];
+        @apply rounded-3xl border border-zinc-800;
+        @apply bg-gradient-to-br from-zinc-900 to-zinc-950;
+        @apply p-6;
+        @apply transition-all duration-300;
+        @apply hover:-translate-y-1;
+        @apply hover:border-violet-500/40;
+        @apply hover:shadow-2xl;
+        @apply hover:shadow-violet-950/20;
+    }
+
+    .chapter-card-compact {
+        @apply min-h-[180px];
+    }
+
+    .chapter-card-medium {
+        @apply min-h-[260px];
+    }
+
+    .chapter-card-large {
+        @apply min-h-[340px];
+    }
+
+    .chapter-number {
+        @apply flex h-10 w-10 items-center justify-center;
+        @apply rounded-full bg-violet-600/20;
+        @apply text-sm font-semibold text-violet-300;
+        @apply border border-violet-500/20;
+    }
+
+    .chapter-summary {
+        @apply text-zinc-400 leading-relaxed;
+        @apply line-clamp-5;
+    }
+
+    .drag-handle {
+        @apply text-zinc-600;
+        @apply transition-colors duration-200;
+        @apply hover:text-zinc-300;
+
+        cursor: grab;
+    }
+
+    .drag-handle:active {
+        cursor: grabbing;
+    }
+
+    .drag-ghost {
+        opacity: 0.4;
+    }
+
+    .drag-chosen {
+        transform: scale(1.03);
+    }
+
+    .part-header-meta {
+        @apply flex items-center gap-3;
+        @apply text-sm text-zinc-500;
+    }
+
+    .chapter-meta {
+        @apply flex items-center justify-between;
+        @apply pt-3 text-sm text-zinc-500;
+    }
+
+    .dashboard-scrollbar {
+        scrollbar-width: thin;
+        scrollbar-color: rgb(63 63 70) transparent;
+    }
+
+    .dashboard-scrollbar::-webkit-scrollbar {
+        width: 10px;
+        height: 10px;
+    }
+
+    .dashboard-scrollbar::-webkit-scrollbar-track {
+        background: transparent;
+    }
+
+    .dashboard-scrollbar::-webkit-scrollbar-thumb {
+        background: rgb(63 63 70);
+        border-radius: 999px;
+    }
+
+    .dashboard-scrollbar::-webkit-scrollbar-thumb:hover {
+        background: rgb(82 82 91);
+    }
+
+    @media (max-width: 1024px) {
+
+        .chapter-grid {
+            grid-template-columns:
+                repeat(auto-fill, minmax(240px, 1fr));
+        }
+
+    }
+
+    @media (max-width: 768px) {
+
+        .chapter-grid {
+            grid-template-columns: 1fr;
+        }
+
+        .search-input {
+            @apply w-full;
+        }
+
+        .chapter-card {
+            @apply min-h-[220px];
+        }
+
+    }
+
+}
