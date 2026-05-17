@@ -6,51 +6,45 @@
 
     .dashboard-panel {
         @apply rounded-3xl border border-zinc-800/80;
-        @apply bg-zinc-900/80 backdrop-blur-xl;
+        @apply bg-[#0e131f] backdrop-blur-xl;
         @apply shadow-2xl shadow-black/20;
     }
 
     .primary-button {
         @apply inline-flex items-center justify-center;
-        @apply rounded-2xl px-5 py-3;
-        @apply bg-violet-600 hover:bg-violet-500;
+        @apply rounded-md px-5 py-3;
+        @apply bg-[#5948bd] hover:bg-[#6d56ec];
         @apply text-sm font-medium text-white;
         @apply transition-all duration-200;
     }
 
     .secondary-button {
         @apply inline-flex items-center justify-center;
-        @apply rounded-2xl px-5 py-3;
-        @apply border border-zinc-700;
-        @apply bg-zinc-800 hover:bg-zinc-700;
+        @apply rounded-md px-5 py-3;
+        @apply border border-zinc-800;
+        @apply bg-transparent hover:border-[#27354a];
         @apply text-sm font-medium text-zinc-200;
         @apply transition-all duration-200;
     }
 
     .search-input {
-        @apply w-72 rounded-2xl border border-zinc-700;
-        @apply bg-zinc-800/80 px-4 py-3;
+        @apply w-72 rounded-md border border-zinc-800;
+        @apply bg-[#131a26] px-4 py-3;
         @apply text-sm text-zinc-100;
         @apply placeholder:text-zinc-500;
         @apply outline-none;
-        @apply focus:border-violet-500;
-    }
-
-    .toolbar-select {
-        @apply rounded-2xl border border-zinc-700;
-        @apply bg-zinc-800/80 px-4 py-3;
-        @apply text-sm text-zinc-200;
+        @apply focus:border-[#5841d8];
     }
 
     .size-toggle-button {
-        @apply rounded-2xl px-4 py-2.5;
+        @apply rounded-md px-4 py-2.5;
         @apply text-sm font-medium text-zinc-400;
         @apply transition-all duration-200;
-        @apply hover:bg-zinc-800;
+        @apply hover:bg-[#131a26];
     }
 
     .size-toggle-button-active {
-        @apply bg-violet-600 text-white;
+        @apply bg-[#5948bd] text-white;
     }
 
     .chapter-grid {
@@ -65,7 +59,7 @@
         @apply relative flex flex-col;
         @apply min-h-[260px];
         @apply rounded-3xl border border-zinc-800;
-        @apply bg-gradient-to-br from-zinc-900 to-zinc-950;
+        //@apply bg-gradient-to-br from-zinc-900 to-zinc-950;
         @apply p-6;
         @apply transition-all duration-300;
         @apply hover:-translate-y-1;

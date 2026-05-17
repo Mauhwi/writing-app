@@ -6,6 +6,7 @@ defineProps({
 
 <template>
     <div class="dashboard-panel p-6 flex items-start justify-between gap-8">
+        <div v-html="project.cover_html"></div>
 
         <div class="space-y-3">
             <p class="text-sm text-zinc-500">
@@ -27,7 +28,7 @@ defineProps({
             </button>
 
             <button class="secondary-button">
-                New Part
+                <span>+</span> New Part
             </button>
         </div>
 

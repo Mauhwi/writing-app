@@ -30,7 +30,7 @@ const cardSize = ref('medium')
 </script>
 
 <template>
-    <div class="min-h-screen bg-zinc-950 text-zinc-100">
+    <div class="min-h-screen bg-[#0b0f17] text-zinc-100">
 
         <div class="mx-auto max-w-7xl px-6 py-8 space-y-6">
 

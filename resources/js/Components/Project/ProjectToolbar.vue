@@ -19,10 +19,6 @@ const emit = defineEmits([
                 class="search-input"
             >
 
-            <select class="toolbar-select">
-                <option>All Chapters</option>
-            </select>
-
         </div>
 
         <div class="flex items-center gap-2">

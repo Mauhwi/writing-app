@@ -38,6 +38,7 @@ const props = defineProps({
             ghost-class="drag-ghost"
             chosen-class="drag-chosen"
             animation="250"
+            handle=".drag-handle"
         >
             <template #item="{ element }">
                 <ChapterGrid

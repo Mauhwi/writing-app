@@ -46,6 +46,13 @@ class ProjectController extends Controller
             'chapters'
         ]);
 
+        $project->chapters->transform(function ($chapter) {
+            $chapter->updated_at_human = $chapter->updated_at->diffForHumans();
+            if ($chapter->content)
+                $chapter->word_count = str_word_count($chapter->content);
+            return $chapter;
+        });
+
         return inertia('Projects/Show', [
             'project' => $project
         ]);

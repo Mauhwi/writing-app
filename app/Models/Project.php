@@ -9,6 +9,8 @@ class Project extends Model
     protected $fillable = [
         'title',
         'description',
+        'cover_html',
+        'cover_image'
     ];
 
     public function user() {
