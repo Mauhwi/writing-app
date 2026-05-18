@@ -4,7 +4,7 @@ namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
 use App\Models\Project;
-use Inertia\Inertia;
+use Illuminate\Support\Facades\Storage;
 
 class ProjectController extends Controller
 {
@@ -56,5 +56,45 @@ class ProjectController extends Controller
         return inertia('Projects/Show', [
             'project' => $project
         ]);
+    }
+
+    public function updateCover(Request $request, Project $project)
+    {
+        if ($project->user_id !== $request->user()->id) {
+            abort(403);
+        }
+
+        $validated = $request->validate([
+            'cover_image' => ['required', 'image', 'max:4096'],
+        ]);
+
+        if ($project->cover_image) {
+            Storage::disk('public')->delete($project->cover_image);
+        }
+
+        $path = $request->file('cover_image')->store('covers', 'public');
+
+        $project->update([
+            'cover_image' => $path,
+        ]);
+
+        return back();
+    }
+
+    public function deleteCover(Request $request, Project $project)
+    {
+        if ($project->user_id !== $request->user()->id) {
+            abort(403);
+        }
+
+        if ($project->cover_image) {
+            Storage::disk('public')->delete($project->cover_image);
+        }
+
+        $project->update([
+            'cover_image' => null,
+        ]);
+
+        return back();
     }
 }

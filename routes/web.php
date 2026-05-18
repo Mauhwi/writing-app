@@ -28,6 +28,12 @@ Route::delete('/projects/{project}', [ProjectController::class, 'delete'])
 Route::get('/projects/{project}', [ProjectController::class, 'show'])
     ->name('projects.show');
 
+Route::post('/projects/{project}/cover', [ProjectController::class, 'updateCover'])
+    ->name('projects.cover.update');
+
+Route::delete('/projects/{project}/cover', [ProjectController::class, 'deleteCover'])
+    ->name('projects.cover.delete');
+
 Route::middleware('auth')->group(function () {
     Route::get('/profile', [ProfileController::class, 'edit'])->name('profile.edit');
     Route::patch('/profile', [ProfileController::class, 'update'])->name('profile.update');
