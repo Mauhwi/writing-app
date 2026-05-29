@@ -34,9 +34,7 @@ const cardSize = ref('medium')
 
         <div class="mx-auto max-w-7xl px-6 py-8 space-y-6">
 
-            <ProjectHeader :project="project" />
-
-            <ProjectToolbar v-model:cardSize="cardSize" />
+            <ProjectHeader :project="project" v-model:cardSize="cardSize"/>
 
             <div
                 v-if="chaptersByPart.length"

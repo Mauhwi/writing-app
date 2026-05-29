@@ -11,19 +11,19 @@
     }
 
     .primary-button {
-        @apply inline-flex items-center justify-center;
-        @apply rounded-md px-5 py-3;
+        @apply inline-flex items-center gap-1;
+        @apply rounded-md px-4 py-2;
         @apply bg-[#5948bd] hover:bg-[#6d56ec];
         @apply text-sm font-medium text-white;
         @apply transition-all duration-200;
     }
 
     .secondary-button {
-        @apply inline-flex items-center justify-center;
-        @apply rounded-md px-5 py-3;
+        @apply inline-flex items-center gap-1;
+        @apply rounded-md px-4 py-2;
         @apply border border-zinc-800;
         @apply bg-transparent hover:border-[#27354a];
-        @apply text-sm font-medium text-zinc-200;
+        @apply text-zinc-300 text-sm font-medium;
         @apply transition-all duration-200;
     }
 
@@ -44,7 +44,7 @@
     }
 
     .size-toggle-button-active {
-        @apply bg-[#5948bd] text-white;
+        @apply bg-indigo-600/20 border border-indigo-500/30 text-indigo-400;
     }
 
     .chapter-grid {
