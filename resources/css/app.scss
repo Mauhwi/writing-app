@@ -36,6 +36,11 @@
         @apply focus:border-[#5841d8];
     }
 
+    .form-modal {
+        @apply bg-[#0e131f] p-6 rounded-lg w-full max-w-md shadow-xl;
+        @apply text-sm text-zinc-100;
+    }
+
     .size-toggle-button {
         @apply rounded-md px-4 py-2.5;
         @apply text-sm font-medium text-zinc-400;

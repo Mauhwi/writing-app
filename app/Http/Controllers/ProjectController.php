@@ -8,7 +8,7 @@ use Illuminate\Support\Facades\Storage;
 
 class ProjectController extends Controller
 {
-    public function make(Request $request)
+    public function store(Request $request)
     {
         $validated = $request->validate([
             'title' => 'required|string|max:255',
@@ -52,6 +52,20 @@ class ProjectController extends Controller
                 $chapter->word_count = str_word_count($chapter->content);
             return $chapter;
         });
+
+        $project->word_count = 0;
+        foreach ($project->chapters as $chapter) {
+            if ($chapter->word_count)
+                $project->word_count += $chapter->word_count;
+        }
+
+        $project->updated_at_human = $project->updated_at->diffForHumans();
+
+        // echo '<pre>';
+        // var_dump($project);
+        // echo '</pre>';
+        // die;
+        
 
         return inertia('Projects/Show', [
             'project' => $project

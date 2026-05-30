@@ -6,6 +6,7 @@ use Illuminate\Support\Facades\Route;
 use Inertia\Inertia;
 use App\Http\Controllers\DashboardController;
 use App\Http\Controllers\ProjectController;
+use App\Http\Controllers\ChapterController;
 
 Route::get('/', function () {
     return Inertia::render('Welcome', [
@@ -20,7 +21,7 @@ Route::get('/dashboard', [DashboardController::class, 'index'])
     ->middleware(['auth', 'verified'])
     ->name('dashboard');
 
-Route::post('/projects', [ProjectController::class, 'make'])->name('projects.make');
+Route::post('/projects', [ProjectController::class, 'store'])->name('projects.store');
 
 Route::delete('/projects/{project}', [ProjectController::class, 'delete'])
     ->name('projects.delete');
@@ -33,6 +34,9 @@ Route::post('/projects/{project}/cover', [ProjectController::class, 'updateCover
 
 Route::delete('/projects/{project}/cover', [ProjectController::class, 'deleteCover'])
     ->name('projects.cover.delete');
+
+Route::post('/projects/{project}/chapters', [ChapterController::class, 'store'])
+    ->name('projects.chapters.store');
 
 Route::middleware('auth')->group(function () {
     Route::get('/profile', [ProfileController::class, 'edit'])->name('profile.edit');

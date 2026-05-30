@@ -1,10 +1,8 @@
 <script setup>
-import { useForm } from '@inertiajs/vue3';
 import { usePage } from "@inertiajs/vue3";
 import { ref, computed } from 'vue';
 
 import ProjectHeader from '@/Components/Project/ProjectHeader.vue'
-import ProjectToolbar from '@/Components/Project/ProjectToolbar.vue'
 import PartSection from '@/Components/Project/PartSection.vue'
 import EmptyProject from '@/Components/Project/EmptyProject.vue'
 

@@ -12,10 +12,9 @@ const form = useForm({
 });
 
 const createProject = () => {
-  // Send POST request to the route defined in web.php
-  form.post(route('projects.make'), {
+  form.post(route('projects.chapters.store'), {
     preserveScroll: true,
-    onSuccess: () => form.reset(), // Reset form on success
+    onSuccess: () => form.reset(),
   });
 };
 

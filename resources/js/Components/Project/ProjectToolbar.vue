@@ -1,14 +1,82 @@
 <script setup>
-defineProps({
+import { useForm } from '@inertiajs/vue3';
+import { ref } from 'vue';
+
+const props = defineProps({
+    project: Object,
     cardSize: String,
 })
 
 const emit = defineEmits([
     'update:cardSize'
 ])
+
+const form = useForm({
+  title: '',
+  summary: '',
+});
+
+const isModalOpen = ref(false);
+
+// const createChapter = () => {
+//   form.post(route('projects.chapters.store'), {
+//     preserveScroll: true,
+//     onSuccess: () => form.reset(),
+//   });
+// };
+
+const submit = () => {
+    form.post(route('projects.chapters.store', props.project.id), {
+        onSuccess: () => {
+            isModalOpen.value = false; // Close modal on success
+            form.reset();             // Clear input fields
+        },
+    });
+};
 </script>
 
 <template>
+    <!-- Popup Modal Background Overlay -->
+    <div v-if="isModalOpen" class="fixed inset-0 bg-black/50 flex items-center justify-center z-50">
+        
+        <!-- TELEPORT TO BODY: Moves this HTML to the very bottom of the document body -->
+        <Teleport to="body">
+            <!-- Full Screen Overlay -->
+            <div 
+                v-if="isModalOpen" 
+                class="fixed inset-0 bg-black/50 flex items-center justify-center z-[9999]"
+            >
+                <!-- Modal Box -->
+                <div class="form-modal">
+                    <h3 class="text-lg font-bold mb-4">Create New Chapter</h3>
+                    
+                    <form @submit.prevent="submit" class="space-y-4">
+                        <div>
+                            <label class="block text-sm font-medium">Chapter Title</label>
+                            <input v-model="form.title" type="text" class="search-input" />
+                            <span v-if="form.errors.title" class="text-red-500 text-sm">{{ form.errors.title }}</span>
+                        </div>
+
+                        <div>
+                            <label class="block text-sm font-medium">Chapter Summary</label>
+                            <textarea v-model="form.summary" type="text" class="search-input"></textarea>
+                            <span v-if="form.errors.summary" class="text-red-500 text-sm">{{ form.errors.summary }}</span>
+                        </div>
+
+                        <!-- Action Buttons -->
+                        <div class="flex justify-end space-x-2 pt-4">
+                            <button type="button" @click="isModalOpen = false" class="secondary-button">
+                                Cancel
+                            </button>
+                            <button type="submit" :disabled="form.processing" class="primary-button">
+                                Save
+                            </button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </Teleport>
+    </div>
     <div class="flex flex-col items-end gap-4 w-full md:w-auto shrink-0">
 
         <!-- Search Bar -->
@@ -25,7 +93,7 @@ const emit = defineEmits([
 
         <!-- Actions Row (Buttons, Filters, Options) -->
         <div class="flex items-center gap-2 w-full md:w-auto justify-end">
-            <button
+            <button  @click="isModalOpen = true" 
                 class="primary-button">
                 <span>+</span> New Chapter
             </button>
