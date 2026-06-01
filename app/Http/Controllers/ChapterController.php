@@ -10,13 +10,12 @@ class ChapterController extends Controller
 {
     public function store(Request $request, Project $project)
     {
-        // 1. Validate incoming form fields
         $validated = $request->validate([
-            'title'   => 'required|string|max:255',
+            'title' => 'required|string|max:255',
             'summary' => 'nullable|string',
         ]);
 
-        // 2. Find the newest part in this specific project
+        //Find the newest part in this specific project
         $latestPart = $project->parts()->latest()->first();
 
         if (!$latestPart) {
@@ -26,11 +25,11 @@ class ChapterController extends Controller
                 'summary' => 'Default first part',
             ]);
         }
-
+        
         $project->chapters()->create([
-            'title'      => $validated['title'],
-            'summary'    => $validated['summary'],
-            'part_id'    => $latestPart->id, 
+            'title' => $validated['title'],
+            'summary' => $validated['summary'],
+            'part_id' => $latestPart->id,
         ]);
 
         return back()->with('success', 'Chapter created successfully.');

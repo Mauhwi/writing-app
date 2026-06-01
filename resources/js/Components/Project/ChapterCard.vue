@@ -31,7 +31,7 @@ const sizeClass = computed(() => {
         <div class="flex items-center justify-between w-full">
             <button class="drag-handle text-zinc-500 hover:text-zinc-300 cursor-grab">⋮⋮</button>
             <div class="chapter-number">
-                {{ chapter.order + 1 }}
+                {{ chapter.order}}
             </div>
             <button class="more-options text-zinc-500 hover:text-zinc-300">⋮</button>
 

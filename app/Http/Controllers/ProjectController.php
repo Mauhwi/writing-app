@@ -59,13 +59,7 @@ class ProjectController extends Controller
                 $project->word_count += $chapter->word_count;
         }
 
-        $project->updated_at_human = $project->updated_at->diffForHumans();
-
-        // echo '<pre>';
-        // var_dump($project);
-        // echo '</pre>';
-        // die;
-        
+        $project->updated_at_human = $project->updated_at->diffForHumans(); 
 
         return inertia('Projects/Show', [
             'project' => $project
