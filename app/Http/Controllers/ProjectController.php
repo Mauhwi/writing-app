@@ -10,6 +10,8 @@ class ProjectController extends Controller
 {
     public function store(Request $request)
     {
+        $this->authorize('create', Project::class);
+
         $validated = $request->validate([
             'title' => 'required|string|max:255',
             'description' => 'nullable|string',
@@ -26,9 +28,7 @@ class ProjectController extends Controller
 
     public function delete(Request $request, Project $project)
     {
-        if ($project->user_id !== $request->user()->id) {
-            abort(403);
-        }
+        $this->authorize('delete', $project);
 
         $project->delete();
 
@@ -37,9 +37,7 @@ class ProjectController extends Controller
 
     public function show(Request $request, Project $project)
     {
-        if ($project->user_id !== $request->user()->id) {
-            abort(403);
-        }
+        $this->authorize('view', $project);
 
         $project->load([
             'parts',
@@ -68,9 +66,7 @@ class ProjectController extends Controller
 
     public function updateCover(Request $request, Project $project)
     {
-        if ($project->user_id !== $request->user()->id) {
-            abort(403);
-        }
+        $this->authorize('update', $project);
 
         $validated = $request->validate([
             'cover_image' => ['required', 'image', 'max:4096'],
@@ -91,9 +87,7 @@ class ProjectController extends Controller
 
     public function deleteCover(Request $request, Project $project)
     {
-        if ($project->user_id !== $request->user()->id) {
-            abort(403);
-        }
+        $this->authorize('update', $project);
 
         if ($project->cover_image) {
             Storage::disk('public')->delete($project->cover_image);

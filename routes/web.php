@@ -21,22 +21,34 @@ Route::get('/dashboard', [DashboardController::class, 'index'])
     ->middleware(['auth', 'verified'])
     ->name('dashboard');
 
-Route::post('/projects', [ProjectController::class, 'store'])->name('projects.store');
+Route::middleware('auth')
+    ->scopeBindings()
+    ->group(function () {
 
-Route::delete('/projects/{project}', [ProjectController::class, 'delete'])
-    ->name('projects.delete');
+        Route::post('/projects', [ProjectController::class, 'store'])
+            ->name('projects.store');
 
-Route::get('/projects/{project}', [ProjectController::class, 'show'])
-    ->name('projects.show');
+        Route::delete('/projects/{project}', [ProjectController::class, 'delete'])
+            ->name('projects.delete');
 
-Route::post('/projects/{project}/cover', [ProjectController::class, 'updateCover'])
-    ->name('projects.cover.update');
+        Route::get('/projects/{project}', [ProjectController::class, 'show'])
+            ->name('projects.show');
 
-Route::delete('/projects/{project}/cover', [ProjectController::class, 'deleteCover'])
-    ->name('projects.cover.delete');
+        Route::post('/projects/{project}/cover', [ProjectController::class, 'updateCover'])
+            ->name('projects.cover.update');
 
-Route::post('/projects/{project}/chapters', [ChapterController::class, 'store'])
-    ->name('projects.chapters.store');
+        Route::delete('/projects/{project}/cover', [ProjectController::class, 'deleteCover'])
+            ->name('projects.cover.delete');
+
+        Route::post('/projects/{project}/chapters', [ChapterController::class, 'store'])
+            ->name('projects.chapters.store');
+
+        Route::get('/projects/{project}/chapters/{chapter}', [ChapterController::class, 'show'])
+            ->name('projects.chapters.show');
+
+        Route::patch('/projects/{project}/chapters/{chapter}', [ChapterController::class, 'update'])
+            ->name('projects.chapters.update');
+    });
 
 Route::middleware('auth')->group(function () {
     Route::get('/profile', [ProfileController::class, 'edit'])->name('profile.edit');

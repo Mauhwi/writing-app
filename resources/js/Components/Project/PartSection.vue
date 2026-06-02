@@ -4,6 +4,7 @@ import draggable from 'vuedraggable'
 import ChapterGrid from './ChapterGrid.vue'
 
 const props = defineProps({
+    project: Object,
     part: Object,
     cardSize: String,
 })
@@ -42,6 +43,7 @@ const props = defineProps({
         >
             <template #item="{ element }">
                 <ChapterGrid
+                    :project="project"
                     :chapter="element"
                     :card-size="cardSize"
                 />

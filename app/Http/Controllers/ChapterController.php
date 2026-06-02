@@ -8,8 +8,19 @@ use App\Models\Chapter;
 
 class ChapterController extends Controller
 {
+    public function show(Request $request, Project $project, Chapter $chapter)
+    {
+        $this->authorize('view', $project);
+        
+        return inertia('Chapters/Show', [
+            'chapter' => $chapter
+        ]);
+    }
+
     public function store(Request $request, Project $project)
     {
+        $this->authorize('update', $project);
+        
         $validated = $request->validate([
             'title' => 'required|string|max:255',
             'summary' => 'nullable|string',
@@ -33,5 +44,16 @@ class ChapterController extends Controller
         ]);
 
         return back()->with('success', 'Chapter created successfully.');
+    }
+
+    public function update(Request $request, Project $project, Chapter $chapter)
+    {
+        $this->authorize('update', $project);
+
+        $chapter->update([
+            'content' => $request->content,
+        ]);     
+
+        return back();
     }
 }

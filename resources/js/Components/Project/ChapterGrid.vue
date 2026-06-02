@@ -2,6 +2,7 @@
 import ChapterCard from './ChapterCard.vue'
 
 const props = defineProps({
+    project: Object,
     chapter: Object,
     cardSize: String,
 })
@@ -9,6 +10,7 @@ const props = defineProps({
 
 <template>
     <ChapterCard
+        :project="project"
         :chapter="chapter"
         :card-size="cardSize"
     />

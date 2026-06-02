@@ -1,7 +1,9 @@
 <script setup>
-import { computed } from 'vue'
+import { computed } from 'vue';
+import { Link } from '@inertiajs/vue3';
 
 const props = defineProps({
+    project: Object,
     chapter: Object,
     cardSize: String,
 })
@@ -38,7 +40,14 @@ const sizeClass = computed(() => {
         </div>
 
         <div class="flex-1 flex flex-col justify-center items-center px-2 my-4 space-y-3">
+            <Link
+                :href="route('projects.chapters.show', {
+                    project: project.id,
+                    chapter: chapter.id
+                })"
+            >
             <h3 class="text-lg font-bold tracking-tight text-white">{{ chapter.title }}</h3>
+            </Link>
             <p class="text-sm text-zinc-400 leading-relaxed max-w-[180px]">
             {{ chapter.summary }}
             </p>

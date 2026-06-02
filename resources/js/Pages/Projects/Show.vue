@@ -42,6 +42,7 @@ const cardSize = ref('medium')
                     v-for="part in chaptersByPart"
                     :key="part.id"
                     :part="part"
+                    :project="project"
                     :card-size="cardSize"
                 />
             </div>

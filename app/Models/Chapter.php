@@ -11,7 +11,8 @@ class Chapter extends Model
         'summary',
         'project_id',
         'part_id',
-        'order'
+        'order',
+        'content'
     ];
 
     protected static function booted(): void
