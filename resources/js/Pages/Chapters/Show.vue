@@ -2,6 +2,11 @@
   import { useEditor, EditorContent } from '@tiptap/vue-3'
   import StarterKit from '@tiptap/starter-kit'
   import { useForm } from '@inertiajs/vue3'
+  import ChapterHeader from '@/Components/Chapter/ChapterHeader.vue'
+  import ChapterSidebar from '@/Components/Chapter/ChapterSidebar.vue'
+  import ChapterToolbar from '@/Components/Chapter/ChapterToolbar.vue'
+  import ChapterEditor from '@/Components/Chapter/ChapterEditor.vue'
+  import ChapterComments from '@/Components/Chapter/ChapterComments.vue'
 
   const props = defineProps({
     chapter: Object
@@ -24,20 +29,34 @@
         chapter: props.chapter.id,
     }))
   }
-
-  console.log(props.chapter);
 </script>
 
 <template>
-  <div class="p-4 bg-white rounded shadow">
-    <h4 class="font-semibold">{{ chapter.title }}</h4>
-  </div>
-  <editor-content :editor="editor" />
-  <button
-    @click="save"
-    :disabled="form.processing"
-    class="px-4 py-2 mt-4 bg-blue-600 text-white rounded"
-  >
-    {{ form.processing ? 'Saving...' : 'Save' }}
-  </button>
+    <div class="min-h-screen bg-[#0b0f17] text-zinc-100">
+
+        <ChapterHeader 
+        :processing="form.processing"
+        @save="save"
+        />
+
+        <div class="flex">
+
+            <ChapterSidebar />
+
+            <div class="flex-1 flex flex-col">
+
+                <ChapterToolbar />
+
+                <ChapterEditor 
+                :editor="editor"
+                :chapter="chapter"
+                />
+
+            </div>
+
+            <ChapterComments />
+
+        </div>
+
+    </div>
 </template>
