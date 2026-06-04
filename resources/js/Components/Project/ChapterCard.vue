@@ -1,12 +1,15 @@
 <script setup>
-import { computed } from 'vue';
+import { computed, ref, onMounted, onBeforeUnmount } from 'vue';
 import { Link } from '@inertiajs/vue3';
 
 const props = defineProps({
     project: Object,
     chapter: Object,
     cardSize: String,
+    menuOpen: Boolean,
 })
+
+defineEmits(['toggle-menu'])
 
 const sizeClass = computed(() => {
     switch (props.cardSize) {
@@ -35,7 +38,44 @@ const sizeClass = computed(() => {
             <div class="chapter-number">
                 {{ chapter.order}}
             </div>
-            <button class="more-options text-zinc-500 hover:text-zinc-300">⋮</button>
+            <div class="relative menu-container">
+                <button
+                    @click.stop="$emit('toggle-menu')"
+                    class="more-options text-zinc-500 hover:text-zinc-300"
+                >
+                    ⋮
+                </button>
+
+                <div
+                    v-if="menuOpen"
+                    @click.stop
+                    class="
+                        absolute top-8 right-0 z-50 w-56 overflow-hidden rounded-xl border border-zinc-800 bg-[#0e131f] shadow-xl">
+                    <Link
+                        :href="route('projects.chapters.show', {
+                            project: project.id,
+                            chapter: chapter.id
+                        })"
+                        class="block px-4 py-3 text-sm text-zinc-200 hover:bg-zinc-800/50"
+                    >
+                        Open Chapter
+                    </Link>
+
+                    <button
+                        class="block w-full px-4 py-3 text-left text-sm text-zinc-200 hover:bg-zinc-800/50"
+                    >
+                        Edit Details
+                    </button>
+
+                    <div class="border-t border-zinc-800"></div>
+
+                    <button
+                        class="block w-full px-4 py-3 text-left text-sm text-red-400 hover:bg-red-500/10"
+                    >
+                        Delete Chapter
+                    </button>
+                </div>
+            </div>
 
         </div>
 

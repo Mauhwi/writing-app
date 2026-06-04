@@ -13,6 +13,8 @@ export default {
     theme: {
         extend: {
             fontFamily: {
+                merriweather: ['Merriweather', 'serif'],
+                book: ['Cormorant Garamond', 'serif'],
                 sans: ['Figtree', ...defaultTheme.fontFamily.sans],
             },
         },

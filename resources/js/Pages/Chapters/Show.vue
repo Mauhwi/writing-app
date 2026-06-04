@@ -7,6 +7,8 @@
   import ChapterToolbar from '@/Components/Chapter/ChapterToolbar.vue'
   import ChapterEditor from '@/Components/Chapter/ChapterEditor.vue'
   import ChapterComments from '@/Components/Chapter/ChapterComments.vue'
+  import Paragraph from '@tiptap/extension-paragraph'
+  import { Extension } from '@tiptap/core'
 
   const props = defineProps({
     chapter: Object
@@ -16,9 +18,39 @@
     content: props.chapter.content,
   })
 
+  const FirstLineTabIndent = Extension.create({
+    name: 'firstLineTabIndent',
+
+    addKeyboardShortcuts() {
+      return {
+        // When pressing Tab, physically insert an Em Space character at the cursor position
+        Tab: () => {
+          const { state, commands } = this.editor;
+          const { selection } = state;
+          const { $anchor } = selection;
+
+          // Force a rule: Only insert the indent if the cursor is at the very beginning of the paragraph
+          //if ($anchor.parentOffset === 0) {
+            return commands.insertContent('\u2003'); // Inserts an Em Space character
+          //}
+
+          // Allow normal Tab behavior if the user is typing mid-sentence
+          return false; 
+        },
+      };
+    },
+  });
+
   const editor = useEditor({
     content: props.chapter.content,
-    extensions: [StarterKit],
+    extensions: [
+      StarterKit.configure({
+        // Disable the default paragraph so CustomParagraph takes over
+        //paragraph: false, 
+      }),
+      FirstLineTabIndent, // Inject our text-based tab utility
+      //CustomParagraph, // Link your custom extension here!
+    ],
   })
 
   const save = () => {

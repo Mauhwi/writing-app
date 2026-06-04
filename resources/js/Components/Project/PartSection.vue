@@ -1,12 +1,27 @@
 <script setup>
 import draggable from 'vuedraggable'
+import { ref, onMounted, onBeforeUnmount } from 'vue'
 
-import ChapterGrid from './ChapterGrid.vue'
+import ChapterCard from './ChapterCard.vue'
 
 const props = defineProps({
     project: Object,
     part: Object,
     cardSize: String,
+})
+
+const activeMenu = ref(null)
+
+const closeMenus = () => {
+    activeMenu.value = null
+}
+
+onMounted(() => {
+    document.addEventListener('click', closeMenus)
+})
+
+onBeforeUnmount(() => {
+    document.removeEventListener('click', closeMenus)
 })
 </script>
 
@@ -42,11 +57,17 @@ const props = defineProps({
             handle=".drag-handle"
         >
             <template #item="{ element }">
-                <ChapterGrid
-                    :project="project"
-                    :chapter="element"
-                    :card-size="cardSize"
-                />
+                
+            <ChapterCard
+                :project="project"
+                :chapter="element"
+                :card-size="cardSize"
+                :menu-open="activeMenu === element.id"
+                @toggle-menu="
+                    activeMenu = activeMenu === element.id
+                        ? null
+                        : element.id"
+            />
             </template>
         </draggable>
 

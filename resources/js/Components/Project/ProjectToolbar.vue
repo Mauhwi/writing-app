@@ -18,13 +18,6 @@ const form = useForm({
 
 const isModalOpen = ref(false);
 
-// const createChapter = () => {
-//   form.post(route('projects.chapters.store'), {
-//     preserveScroll: true,
-//     onSuccess: () => form.reset(),
-//   });
-// };
-
 const submit = () => {
     form.post(route('projects.chapters.store', props.project.id), {
         onSuccess: () => {

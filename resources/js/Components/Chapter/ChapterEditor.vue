@@ -15,19 +15,19 @@
         class="flex-1"
     >
         <div
-            class="max-w-6xl mx-auto p-10"
+            class="max-w-5xl mx-auto p-10"
         >
             <div
                 class="p-12 min-h-[900px]"
             >
                 <h1
-                    class="text-5xl font-serif mb-10"
+                    class="font-merriweather font-light text-3xl md:text-4xl tracking-wide mb-8"
                 >
-                    {{ chapter.title }}
+                    &emsp14; {{ chapter.title }}
                 </h1>
 
                 <div
-                    class="prose prose-invert max-w-none"
+                    class="font-merriweather font-light text-base md:text-lg leading-loose tracking-wide text-slate-300 text-justify mb-6"
                 >
                     <editor-content :editor="editor" />
                 </div>
@@ -45,5 +45,12 @@
 <style>
 .ProseMirror {
     outline: none;
+}
+.tiptap p {
+  margin-bottom: 1rem;
+}
+
+.tiptap p:last-child {
+  margin-bottom: 0;
 }
 </style>
