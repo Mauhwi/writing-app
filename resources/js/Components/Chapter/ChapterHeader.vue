@@ -1,9 +1,27 @@
 <script setup>
-defineProps({
+import { Link } from '@inertiajs/vue3'
+import { computed } from 'vue'
+import { useTimeAgo } from '@vueuse/core'
+
+const props = defineProps({
+    project: Object,
+    chapterTitle: String,
+    updatedAt: String,
+    order: Number,
     processing: Boolean,
 })
 
 defineEmits(['save'])
+
+const timeAgo = useTimeAgo(() => {
+    const savedAt = new Date(props.updatedAt)
+    const now = new Date()
+
+    return savedAt > now ? now : savedAt
+}, {
+    showSecond: true,
+    updateInterval: 15000,
+})
 </script>
 
 <template>
@@ -17,21 +35,22 @@ defineEmits(['save'])
         px-6 flex items-center justify-between
     "
     >
-        <button
+        <Link
+            :href="route('projects.show', project)"
             class="text-slate-300 hover:text-white transition-colors"
         >
-            ← The Last Light
-        </button>
+            ← {{ project.title }}
+        </Link>
 
         <div class="text-center">
             <h1 class="text-xl font-semibold">
-                Chapter 5: Shadows of the Past
+                Chapter {{ order }}: {{ chapterTitle }}
             </h1>
         </div>
 
         <div class="flex items-center gap-4">
             <span class="text-sm text-slate-400">
-                Saved 2 minutes ago
+                Saved {{ timeAgo  }}
             </span>
 
             <button

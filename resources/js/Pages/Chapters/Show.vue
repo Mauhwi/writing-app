@@ -1,5 +1,5 @@
 <script setup>
-  import { useEditor, EditorContent } from '@tiptap/vue-3'
+  import { useEditor } from '@tiptap/vue-3'
   import StarterKit from '@tiptap/starter-kit'
   import { useForm } from '@inertiajs/vue3'
   import ChapterHeader from '@/Components/Chapter/ChapterHeader.vue'
@@ -7,10 +7,10 @@
   import ChapterToolbar from '@/Components/Chapter/ChapterToolbar.vue'
   import ChapterEditor from '@/Components/Chapter/ChapterEditor.vue'
   import ChapterComments from '@/Components/Chapter/ChapterComments.vue'
-  import Paragraph from '@tiptap/extension-paragraph'
   import { Extension } from '@tiptap/core'
 
   const props = defineProps({
+    project: Object,
     chapter: Object
   })
 
@@ -35,7 +35,7 @@
           //}
 
           // Allow normal Tab behavior if the user is typing mid-sentence
-          return false; 
+          //return false; 
         },
       };
     },
@@ -44,12 +44,8 @@
   const editor = useEditor({
     content: props.chapter.content,
     extensions: [
-      StarterKit.configure({
-        // Disable the default paragraph so CustomParagraph takes over
-        //paragraph: false, 
-      }),
+      StarterKit,
       FirstLineTabIndent, // Inject our text-based tab utility
-      //CustomParagraph, // Link your custom extension here!
     ],
   })
 
@@ -67,6 +63,10 @@
     <div class="min-h-screen bg-[#0b0f17] text-zinc-100">
 
         <ChapterHeader 
+        :project="project"
+        :chapter-title="chapter.title"
+        :updated-at="chapter.updated_at" 
+        :order="chapter.order"
         :processing="form.processing"
         @save="save"
         />

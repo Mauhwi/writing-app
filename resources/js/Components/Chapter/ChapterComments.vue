@@ -2,7 +2,7 @@
 const comments = [
     {
         author: 'Reader',
-        text: 'I love this line. It really sets the tone.',
+        text: "Honestly cringe and I'm here for it",
     },
     {
         author: 'Reader',
@@ -10,7 +10,7 @@ const comments = [
     },
     {
         author: 'Reader',
-        text: 'Great use of tension.',
+        text: 'Ewe',
     },
 ]
 </script>

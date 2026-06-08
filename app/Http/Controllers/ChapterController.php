@@ -11,8 +11,18 @@ class ChapterController extends Controller
     public function show(Request $request, Project $project, Chapter $chapter)
     {
         $this->authorize('view', $project);
+
+        $chapter->updated_at = $chapter->updated_at->toISOString();
+        
+        if ($chapter->content) {
+            $chapter->word_count = str_word_count($chapter->content);
+        }
         
         return inertia('Chapters/Show', [
+            'project' => [
+                'id' => $project->id,
+                'title' => $project->title,
+            ],
             'chapter' => $chapter
         ]);
     }

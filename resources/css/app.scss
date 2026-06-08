@@ -13,15 +13,14 @@
 @layer components {
 
     .dashboard-panel {
-        @apply rounded-3xl border border-zinc-800/80;
+        @apply rounded-lg border border-zinc-800/80;
         @apply bg-[#0e131f] backdrop-blur-xl;
-        @apply shadow-2xl shadow-black/20;
     }
 
     .primary-button {
         @apply inline-flex items-center gap-1;
         @apply rounded-md px-4 py-2;
-        @apply bg-[#5948bd] hover:bg-[#6d56ec];
+        @apply bg-[#5948bd]/60 hover:bg-[#6d56ec];
         @apply text-sm font-medium text-white;
         @apply transition-all duration-200;
     }
