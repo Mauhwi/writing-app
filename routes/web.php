@@ -36,6 +36,9 @@ Route::middleware('auth')
         Route::post('/projects/{project}/cover', [ProjectController::class, 'updateCover'])
             ->name('projects.cover.update');
 
+        Route::post('/projects/{project}/details', [ProjectController::class, 'updateDetails'])
+            ->name('projects.details.update');
+
         Route::delete('/projects/{project}/cover', [ProjectController::class, 'deleteCover'])
             ->name('projects.cover.delete');
 

@@ -15,7 +15,7 @@ class ChapterController extends Controller
         $chapter->updated_at = $chapter->updated_at->toISOString();
         
         if ($chapter->content) {
-            $chapter->word_count = str_word_count($chapter->content);
+            $chapter->word_count = str_word_count(strip_tags($chapter->content));
         }
         
         return inertia('Chapters/Show', [

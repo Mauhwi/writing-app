@@ -1,5 +1,5 @@
 <script setup>
-    import Modal from '@/Components/ChapterModal.vue'
+    import Modal from '@/Components/Modal.vue'
     import { computed, ref } from 'vue';
     import { Link, useForm } from '@inertiajs/vue3';
 

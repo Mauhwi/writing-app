@@ -48,9 +48,67 @@ const deleteCover = () => {
         preserveScroll: true,
     })
 }
+
+const isModalOpen = ref(false);
+
+const detailsForm = useForm({
+    title: props.project.title,
+    description: props.project.description,
+})
+
+const submit = () => {
+    detailsForm.post(route('projects.details.update', props.project.id), {
+        onSuccess: () => {
+            isModalOpen.value = false;
+            detailsForm.reset();
+        },
+    });
+};
 </script>
 
 <template>
+    <!-- Popup Modal Background Overlay -->
+    <div v-if="isModalOpen" class="fixed inset-0 bg-black/50 flex items-center justify-center z-50">
+        
+        <!-- TELEPORT TO BODY: Moves this HTML to the very bottom of the document body -->
+        <Teleport to="body">
+            <!-- Full Screen Overlay -->
+            <div 
+                v-if="isModalOpen" 
+                class="fixed inset-0 bg-black/50 flex items-center justify-center z-[9999]"
+            >
+                <!-- Modal Box -->
+                <div class="form-modal">
+                    <h3 class="text-lg font-bold mb-4">Edit Project</h3>
+                    
+                    <form @submit.prevent="submit" class="space-y-4">
+                        <div>
+                            <label class="block text-sm font-medium">Project Title</label>
+                            <input v-model="detailsForm.title" type="text" class="search-input" />
+                            <span v-if="detailsForm.errors.title" class="text-red-500 text-sm">{{ detailsForm.errors.title }}</span>
+                        </div>
+
+                        <div>
+                            <label class="block text-sm font-medium">Project Description</label>
+                            <textarea v-model="detailsForm.description" type="text" class="search-input"></textarea>
+                            <span v-if="detailsForm.errors.description" class="text-red-500 text-sm">{{ detailsForm.errors.description }}</span>
+                        </div>
+
+                        <!-- Action Buttons -->
+                        <div class="flex justify-end space-x-2 pt-4">
+                            <button type="button" @click="isModalOpen = false" class="secondary-button">
+                                Cancel
+                            </button>
+                            <button type="submit" :disabled="detailsForm.processing" class="primary-button">
+                                Save
+                            </button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </Teleport>
+    </div>
+    
     <div class="dashboard-panel p-6 flex flex-col md:flex-row items-start justify-between gap-8">
         <!-- LEFT SECTION: Cover, Breadcrumbs, Title, Stats -->
         <div class="flex items-start gap-6 flex-1 w-full">
@@ -108,7 +166,7 @@ const deleteCover = () => {
                 <!-- Title with Edit Inline Pencil Icon -->
                 <div class="flex items-center gap-2 group/title">
                     <h1 class="text-3xl font-bold tracking-tight">{{ project.title }}</h1>
-                    <button
+                    <button @click="isModalOpen = true"
                         class="text-zinc-500 hover:text-zinc-300 opacity-0 group-hover/title:opacity-100 transition-opacity">
                         <svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
@@ -150,5 +208,4 @@ const deleteCover = () => {
             @update:cardSize="emit('update:cardSize', $event)"
         />
     </div>
-
 </template>

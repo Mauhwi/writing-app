@@ -47,7 +47,7 @@ class ProjectController extends Controller
         $project->chapters->transform(function ($chapter) {
             $chapter->updated_at_human = $chapter->updated_at->diffForHumans();
             if ($chapter->content)
-                $chapter->word_count = str_word_count($chapter->content);
+                $chapter->word_count = str_word_count(strip_tags($chapter->content));
             return $chapter;
         });
 
@@ -81,6 +81,20 @@ class ProjectController extends Controller
         $project->update([
             'cover_image' => $path,
         ]);
+
+        return back();
+    }
+
+    
+    public function updateDetails(Request $request, Project $project)
+    {
+        $this->authorize('update', $project);
+
+        $validated = $request->validate([
+            'title' => ['required', 'string', 'max:255'],
+            'description' => ['nullable', 'string'],
+        ]);
+        $project->update($validated);
 
         return back();
     }

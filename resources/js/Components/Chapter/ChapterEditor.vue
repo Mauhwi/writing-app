@@ -45,6 +45,7 @@
 <style>
 .ProseMirror {
     outline: none;
+    text-indent: 1em;
 }
 .tiptap p {
   margin-bottom: 1rem;
