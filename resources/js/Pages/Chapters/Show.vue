@@ -52,7 +52,7 @@
   const save = () => {
     form.content = editor.value.getHTML()
 
-    form.patch(route('projects.chapters.update', {
+    form.patch(route('projects.chapters.updateContent', {
         project: props.chapter.project_id,
         chapter: props.chapter.id,
     }))

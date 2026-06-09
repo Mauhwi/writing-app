@@ -1,28 +1,52 @@
 <script setup>
-import { computed, ref, onMounted, onBeforeUnmount } from 'vue';
-import { Link } from '@inertiajs/vue3';
+    import Modal from '@/Components/ChapterModal.vue'
+    import { computed, ref } from 'vue';
+    import { Link, useForm } from '@inertiajs/vue3';
 
-const props = defineProps({
-    project: Object,
-    chapter: Object,
-    cardSize: String,
-    menuOpen: Boolean,
-})
+    const props = defineProps({
+        project: Object,
+        chapter: Object,
+        cardSize: String,
+        menuOpen: Boolean,
+    }) 
 
-defineEmits(['toggle-menu'])
+    defineEmits(['toggle-menu'])
 
-const sizeClass = computed(() => {
-    switch (props.cardSize) {
-        case 'compact':
-            return 'chapter-card-compact'
+    const sizeClass = computed(() => {
+        switch (props.cardSize) {
+            case 'compact':
+                return 'chapter-card-compact'
 
-        case 'large':
-            return 'chapter-card-large'
+            case 'large':
+                return 'chapter-card-large'
 
-        default:
-            return 'chapter-card-medium'
+            default:
+                return 'chapter-card-medium'
+        }
+    })
+
+    const isEditModalOpen = ref(false)
+
+    const form = useForm({
+        title: props.chapter.title,
+        summary: props.chapter.summary,
+    })
+
+    const submit = () => {
+        form.patch(
+            route('projects.chapters.updateDetails', {
+                project: props.project.id,
+                chapter: props.chapter.id,
+            }),
+            {
+                preserveScroll: true,
+
+                onSuccess: () => {
+                    isEditModalOpen.value = false
+                }
+            }
+        )
     }
-})
 </script>
 
 <template>
@@ -62,6 +86,10 @@ const sizeClass = computed(() => {
                     </Link>
 
                     <button
+                        @click="
+                            isEditModalOpen = true;
+                            $emit('toggle-menu');
+                        "
                         class="block w-full px-4 py-3 text-left text-sm text-zinc-200 hover:bg-zinc-800/50"
                     >
                         Edit Details
@@ -99,4 +127,69 @@ const sizeClass = computed(() => {
         </div>
 
     </article>
+
+    <Modal :show="isEditModalOpen">
+
+        <h3 class="text-lg font-bold mb-4">
+            Edit Chapter
+        </h3>
+
+        <form
+            @submit.prevent="submit"
+            class="space-y-4"
+        >
+
+            <div>
+                <label class="block text-sm font-medium">
+                    Chapter Title
+                </label>
+
+                <input
+                    v-model="form.title"
+                    type="text"
+                    class="search-input"
+                />
+
+                <span
+                    v-if="form.errors.title"
+                    class="text-red-500 text-sm"
+                >
+                    {{ form.errors.title }}
+                </span>
+            </div>
+
+            <div>
+                <label class="block text-sm font-medium">
+                    Chapter Summary
+                </label>
+
+                <textarea
+                    v-model="form.summary"
+                    class="search-input"
+                />
+            </div>
+
+            <div class="flex justify-end space-x-2 pt-4">
+
+                <button
+                    type="button"
+                    @click="isEditModalOpen = false"
+                    class="secondary-button"
+                >
+                    Cancel
+                </button>
+
+                <button
+                    type="submit"
+                    :disabled="form.processing"
+                    class="primary-button"
+                >
+                    Save
+                </button>
+
+            </div>
+
+        </form>
+
+    </Modal>
 </template>

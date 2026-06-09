@@ -1,6 +1,5 @@
 <script setup>
 import { Link } from '@inertiajs/vue3'
-import { computed } from 'vue'
 import { useTimeAgo } from '@vueuse/core'
 
 const props = defineProps({

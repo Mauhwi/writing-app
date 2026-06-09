@@ -45,8 +45,11 @@ Route::middleware('auth')
         Route::get('/projects/{project}/chapters/{chapter}', [ChapterController::class, 'show'])
             ->name('projects.chapters.show');
 
-        Route::patch('/projects/{project}/chapters/{chapter}', [ChapterController::class, 'update'])
-            ->name('projects.chapters.update');
+        Route::patch('/projects/{project}/chapters/{chapter}/content', [ChapterController::class, 'updateContent'])
+            ->name('projects.chapters.updateContent');
+
+        Route::patch('/projects/{project}/chapters/{chapter}/details', [ChapterController::class, 'updateDetails'])
+            ->name('projects.chapters.updateDetails');
     });
 
 Route::middleware('auth')->group(function () {

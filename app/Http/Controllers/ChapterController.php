@@ -56,13 +56,29 @@ class ChapterController extends Controller
         return back()->with('success', 'Chapter created successfully.');
     }
 
-    public function update(Request $request, Project $project, Chapter $chapter)
+    public function updateContent(Request $request, Project $project, Chapter $chapter)
     {
         $this->authorize('update', $project);
 
-        $chapter->update([
-            'content' => $request->content,
-        ]);     
+        $validated = $request->validate([
+            'content' => ['nullable', 'string'],
+        ]);
+
+        $chapter->update($validated);
+
+        return back();
+    }
+
+    public function updateDetails(Request $request, Project $project, Chapter $chapter)
+    {
+        $this->authorize('update', $project);
+
+        $validated = $request->validate([
+            'title' => ['required', 'string', 'max:255'],
+            'summary' => ['nullable', 'string'],
+        ]);
+
+        $chapter->update($validated);
 
         return back();
     }
