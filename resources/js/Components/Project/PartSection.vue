@@ -46,30 +46,45 @@ onBeforeUnmount(() => {
 
         </div>
 
-        <draggable
-            :list="part.chapters"
-            item-key="id"
-            group="chapters"
-            class="chapter-grid"
-            ghost-class="drag-ghost"
-            chosen-class="drag-chosen"
-            animation="250"
-            handle=".drag-handle"
-        >
-            <template #item="{ element }">
-                
-            <ChapterCard
-                :project="project"
-                :chapter="element"
-                :card-size="cardSize"
-                :menu-open="activeMenu === element.id"
-                @toggle-menu="
-                    activeMenu = activeMenu === element.id
-                        ? null
-                        : element.id"
-            />
-            </template>
-        </draggable>
+        <template v-if="part.chapters.length">
+            <draggable
+                :list="part.chapters"
+                item-key="id"
+                group="chapters"
+                class="chapter-grid"
+                ghost-class="drag-ghost"
+                chosen-class="drag-chosen"
+                animation="250"
+                handle=".drag-handle"
+            >
+                <template #item="{ element }">
+                    
+                <ChapterCard
+                    :project="project"
+                    :chapter="element"
+                    :card-size="cardSize"
+                    :menu-open="activeMenu === element.id"
+                    @toggle-menu="
+                        activeMenu = activeMenu === element.id
+                            ? null
+                            : element.id"
+                />
+                </template>
+            </draggable>
+        </template>
+
+        <div v-else
+            class="rounded-xl border border-dashed border-zinc-700/70 bg-zinc-900/30 px-8 py-12 text-center">
+            <div class="space-y-3">
+                <p class="text-lg text-zinc-300">
+                    This part is empty
+                </p>
+
+                <p class="max-w-md mx-auto text-sm text-zinc-500">
+                    Add chapters here to begin drafting this section.
+                </p>
+            </div>
+        </div>
 
     </section>
 </template>

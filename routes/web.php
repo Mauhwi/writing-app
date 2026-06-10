@@ -36,11 +36,11 @@ Route::middleware('auth')
         Route::post('/projects/{project}/cover', [ProjectController::class, 'updateCover'])
             ->name('projects.cover.update');
 
-        Route::post('/projects/{project}/details', [ProjectController::class, 'updateDetails'])
-            ->name('projects.details.update');
-
         Route::delete('/projects/{project}/cover', [ProjectController::class, 'deleteCover'])
             ->name('projects.cover.delete');
+
+        Route::patch('/projects/{project}', [ProjectController::class, 'update'])
+            ->name('projects.update');
 
         Route::post('/projects/{project}/chapters', [ChapterController::class, 'store'])
             ->name('projects.chapters.store');

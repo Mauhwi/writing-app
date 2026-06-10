@@ -24,6 +24,10 @@ const chaptersByPart = computed(() => {
     })
 })
 
+const unassignedChapters = computed(() =>
+    project.chapters.filter(chapter => !chapter.part_id)
+)
+
 const cardSize = ref('medium')
 </script>
 
@@ -42,6 +46,18 @@ const cardSize = ref('medium')
                     v-for="part in chaptersByPart"
                     :key="part.id"
                     :part="part"
+                    :project="project"
+                    :card-size="cardSize"
+                />
+
+                <PartSection
+                    v-if="unassignedChapters.length"
+                    :part="{
+                        id: 'unassigned',
+                        title: 'Unassigned Chapters',
+                        description: 'Chapters that are not assigned to a part yet.',
+                        chapters: unassignedChapters
+                    }"
                     :project="project"
                     :card-size="cardSize"
                 />

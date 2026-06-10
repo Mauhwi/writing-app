@@ -52,18 +52,18 @@ const deleteCover = () => {
 const isModalOpen = ref(false);
 
 const detailsForm = useForm({
+    action: 'update_details',
     title: props.project.title,
     description: props.project.description,
 })
 
 const submit = () => {
-    detailsForm.post(route('projects.details.update', props.project.id), {
+    detailsForm.patch(route('projects.update', props.project.id), {
         onSuccess: () => {
-            isModalOpen.value = false;
-            detailsForm.reset();
+            isModalOpen.value = false
         },
-    });
-};
+    })
+}
 </script>
 
 <template>

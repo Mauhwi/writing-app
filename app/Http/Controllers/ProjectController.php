@@ -64,6 +64,95 @@ class ProjectController extends Controller
         ]);
     }
 
+    public function update(Request $request, Project $project)
+    {
+        $this->authorize('update', $project);
+
+        $action = $request->input('action');
+
+        switch ($action) {
+            case 'update_details':
+                return $this->updateDetails($request, $project);
+
+            case 'create_part':
+                return $this->createPart($request, $project);
+
+            case 'rename_part':
+                return $this->renamePart($request, $project);
+
+            case 'delete_part':
+                return $this->deletePart($request, $project);
+
+            default:
+                abort(400, 'Unknown action.');
+        }
+    }
+
+    public function updateDetails(Request $request, Project $project)
+    {
+        $this->authorize('update', $project);
+
+        $validated = $request->validate([
+            'title' => ['required', 'string', 'max:255'],
+            'description' => ['nullable', 'string'],
+        ]);
+        $project->update($validated);
+
+        return back();
+    }
+
+    private function createPart(Request $request, Project $project)
+    {
+        $this->authorize('update', $project);
+
+        $validated = $request->validate([
+            'title' => ['required', 'string', 'max:255'],
+        ]);
+
+        $project->parts()->create([
+            'title' => $validated['title'],
+        ]);
+
+        return back();
+    }
+
+    private function renamePart(Request $request, Project $project)
+    {
+        $validated = $request->validate([
+            'part_id' => ['required', 'integer'],
+            'title' => ['required', 'string', 'max:255'],
+        ]);
+
+        $part = $project->parts()
+            ->where('id', $validated['part_id'])
+            ->firstOrFail();
+
+        $part->update([
+            'title' => $validated['title'],
+        ]);
+
+        return back();
+    }
+
+    private function deletePart(Request $request, Project $project)
+    {
+        $validated = $request->validate([
+            'part_id' => ['required', 'integer'],
+        ]);
+
+        $part = $project->parts()
+            ->where('id', $validated['part_id'])
+            ->firstOrFail();
+            
+        $part->chapters()->update([
+            'part_id' => null,
+        ]);
+
+        $part->delete();
+
+        return back();
+    }
+
     public function updateCover(Request $request, Project $project)
     {
         $this->authorize('update', $project);
@@ -81,20 +170,6 @@ class ProjectController extends Controller
         $project->update([
             'cover_image' => $path,
         ]);
-
-        return back();
-    }
-
-    
-    public function updateDetails(Request $request, Project $project)
-    {
-        $this->authorize('update', $project);
-
-        $validated = $request->validate([
-            'title' => ['required', 'string', 'max:255'],
-            'description' => ['nullable', 'string'],
-        ]);
-        $project->update($validated);
 
         return back();
     }
