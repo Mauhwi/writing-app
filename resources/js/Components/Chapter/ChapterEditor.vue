@@ -1,11 +1,10 @@
 <script setup>
   import { useEditor, EditorContent } from '@tiptap/vue-3'
-  import StarterKit from '@tiptap/starter-kit'
-  import { useForm } from '@inertiajs/vue3'
 
   const props = defineProps({
     chapter: Object,
-    editor: Object
+    editor: Object,
+    canEdit: Boolean
   })
 
 </script>
@@ -29,7 +28,7 @@
                 <div
                     class="font-merriweather font-light text-base md:text-lg leading-loose tracking-wide text-slate-300 text-justify mb-6"
                 >
-                    <editor-content :editor="editor" />
+                    <editor-content :editor="editor" :spellcheck="canEdit"/>
                 </div>
             </div>
 

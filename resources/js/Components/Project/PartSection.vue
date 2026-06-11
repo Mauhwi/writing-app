@@ -8,6 +8,7 @@ const props = defineProps({
     project: Object,
     part: Object,
     cardSize: String,
+    canEdit: Boolean
 })
 
 const activeMenu = ref(null)
@@ -64,6 +65,7 @@ onBeforeUnmount(() => {
                     :chapter="element"
                     :card-size="cardSize"
                     :menu-open="activeMenu === element.id"
+                    :can-edit="canEdit"
                     @toggle-menu="
                         activeMenu = activeMenu === element.id
                             ? null

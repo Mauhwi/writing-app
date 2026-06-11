@@ -22,6 +22,7 @@ class User extends Authenticatable
      *
      * @return array<string, string>
      */
+
     protected function casts(): array
     {
         return [
@@ -32,6 +33,11 @@ class User extends Authenticatable
 
     public function projects() {
         return $this->hasMany(Project::class);
+    }
+
+    public function sharedProjects()
+    {
+        return $this->belongsToMany(Project::class);
     }
 
     public function isAuthor(): bool

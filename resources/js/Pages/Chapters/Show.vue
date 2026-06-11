@@ -11,7 +11,8 @@
 
   const props = defineProps({
     project: Object,
-    chapter: Object
+    chapter: Object,
+    canEdit: Boolean
   })
 
   const form = useForm({
@@ -47,6 +48,7 @@
       StarterKit,
       FirstLineTabIndent, // Inject our text-based tab utility
     ],
+    editable: props.canEdit,
   })
 
   const save = () => {
@@ -82,6 +84,7 @@
                 <ChapterEditor 
                 :editor="editor"
                 :chapter="chapter"
+                :canEdit="canEdit"
                 />
 
             </div>

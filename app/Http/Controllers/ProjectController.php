@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use Illuminate\Http\Request;
 use App\Models\Project;
 use Illuminate\Support\Facades\Storage;
+use App\Models\User;
 
 class ProjectController extends Controller
 {
@@ -58,9 +59,10 @@ class ProjectController extends Controller
         }
 
         $project->updated_at_human = $project->updated_at->diffForHumans(); 
-
+        
         return inertia('Projects/Show', [
-            'project' => $project
+            'project' => $project,
+            'canEdit' => $project->user_id === auth()->id(),
         ]);
     }
 
@@ -188,4 +190,20 @@ class ProjectController extends Controller
 
         return back();
     }
+
+    public function share(Request $request, Project $project)
+    {
+        $this->authorize('update', $project);
+
+        $reader = User::where('email', $request->email)
+            ->where('role', 'reader')
+            ->firstOrFail();
+
+        $project->readers()
+            ->syncWithoutDetaching([$reader->id]);
+
+        return back();
+    }
+
+    //TODO: list of shared and remove them from the list
 }

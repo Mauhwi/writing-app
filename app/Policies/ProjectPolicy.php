@@ -18,7 +18,10 @@ class ProjectPolicy
 
     public function view(User $user, Project $project): bool
     {
-        return $project->user_id === $user->id;
+        return $project->user_id === $user->id
+            || $project->readers()
+                ->where('user_id', $user->id)
+                ->exists();
     }
 
     public function create(User $user): bool

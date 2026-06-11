@@ -27,4 +27,14 @@ class Project extends Model
     public function comments() {
         return $this->hasMany(Comment::class);
     }
+
+    public function owner()
+    {
+        return $this->belongsTo(User::class, 'user_id');
+    }
+
+    public function readers()
+    {
+        return $this->belongsToMany(User::class);
+    }
 }

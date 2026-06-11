@@ -6,6 +6,7 @@ import Modal from '@/Components/Modal.vue'
 const props = defineProps({
     project: Object,
     cardSize: String,
+    canEdit: Boolean
 })
 
 const emit = defineEmits([
@@ -45,7 +46,8 @@ const submitPart = () => {
 </script>
 
 <template>
-    <Modal :show="isChapterModalOpen">
+    <Modal  v-if="canEdit" 
+        :show="isChapterModalOpen">
         <h3 class="text-lg font-bold mb-4">
             Create New Chapter
         </h3>
@@ -103,7 +105,8 @@ const submitPart = () => {
         </form>
     </Modal>
 
-    <Modal :show="isPartModalOpen">
+    <Modal  v-if="canEdit"
+    :show="isPartModalOpen">
         <h3 class="text-lg font-bold mb-4">
             Create New Part
         </h3>
@@ -167,6 +170,7 @@ const submitPart = () => {
         <!-- Actions Row (Buttons, Filters, Options) -->
         <div class="flex items-center gap-2 w-full md:w-auto justify-end">
             <button
+                v-if="canEdit"
                 @click="isChapterModalOpen = true"
                 class="primary-button"
             >
@@ -174,6 +178,7 @@ const submitPart = () => {
             </button>
 
             <button
+                v-if="canEdit"
                 @click="isPartModalOpen = true"
                 class="secondary-button"
             >

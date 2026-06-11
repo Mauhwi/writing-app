@@ -7,7 +7,8 @@
         project: Object,
         chapter: Object,
         cardSize: String,
-        menuOpen: Boolean,
+        menuOpen: Boolean, 
+        canEdit: Boolean
     }) 
 
     defineEmits(['toggle-menu'])
@@ -63,7 +64,7 @@
                 {{ chapter.order}}
             </div>
             <div class="relative menu-container">
-                <button
+                <button v-if="canEdit"
                     @click.stop="$emit('toggle-menu')"
                     class="more-options text-zinc-500 hover:text-zinc-300"
                 >
@@ -128,7 +129,7 @@
 
     </article>
 
-    <Modal :show="isEditModalOpen">
+    <Modal v-if="canEdit" :show="isEditModalOpen">
 
         <h3 class="text-lg font-bold mb-4">
             Edit Chapter

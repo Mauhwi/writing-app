@@ -23,7 +23,8 @@ class ChapterController extends Controller
                 'id' => $project->id,
                 'title' => $project->title,
             ],
-            'chapter' => $chapter
+            'chapter' => $chapter,
+            'canEdit' => $project->user_id === auth()->id(),
         ]);
     }
 

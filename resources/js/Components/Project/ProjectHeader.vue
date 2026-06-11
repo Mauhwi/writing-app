@@ -6,6 +6,7 @@ import ProjectToolbar from '@/Components/Project/ProjectToolbar.vue'
 const props = defineProps({
     project: Object,
     cardSize: String,
+    canEdit: Boolean
 })
 
 const emit = defineEmits([
@@ -32,15 +33,20 @@ const uploadFile = (file) => {
 }
 
 const uploadCover = (event) => {
+    if (props.canEdit)
+    {
     uploadFile(event.target.files[0])
+    }
 }
 
 const handleDrop = (event) => {
     isDragging.value = false
 
-    const file = event.dataTransfer.files[0]
-
-    uploadFile(file)
+    if (props.canEdit)
+    {
+        const file = event.dataTransfer.files[0]
+        uploadFile(file)
+    }
 }
 
 const deleteCover = () => {
@@ -121,7 +127,7 @@ const submit = () => {
                     ? 'border-red-500 bg-red-500/10 scale-[1.02] shadow-lg shadow-red-500/20'
                     : 'border-zinc-800 bg-zinc-900/70 hover:border-zinc-700'
             ]">
-                <input type="file" class="hidden" accept="image/*" @change="uploadCover">
+                <input v-if="canEdit" type="file" class="hidden" accept="image/*" @change="uploadCover">
 
                 <img v-if="project.cover_image" :src="`/storage/${project.cover_image}`"
                     class="w-full h-full object-cover">
@@ -146,7 +152,7 @@ const submit = () => {
                 </div>
 
                 <!-- Delete Button -->
-                <button v-if="project.cover_image" type="button" @click.stop.prevent="deleteCover"
+                <button v-if="project.cover_image && canEdit" type="button" @click.stop.prevent="deleteCover"
                     class="absolute top-2 right-2 opacity-0 group-hover:opacity-100 transition-opacity bg-black/70 hover:bg-black text-white rounded-md px-2 py-1 text-xs z-10">
                     Delete
                 </button>
@@ -166,7 +172,7 @@ const submit = () => {
                 <!-- Title with Edit Inline Pencil Icon -->
                 <div class="flex items-center gap-2 group/title">
                     <h1 class="text-3xl font-bold tracking-tight">{{ project.title }}</h1>
-                    <button @click="isModalOpen = true"
+                    <button v-if="canEdit" @click="isModalOpen = true"
                         class="text-zinc-500 hover:text-zinc-300 opacity-0 group-hover/title:opacity-100 transition-opacity">
                         <svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
@@ -205,6 +211,7 @@ const submit = () => {
         <ProjectToolbar
             :project="project"
             :cardSize="cardSize"
+            :can-edit="canEdit"
             @update:cardSize="emit('update:cardSize', $event)"
         />
     </div>

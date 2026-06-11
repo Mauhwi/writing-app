@@ -8,16 +8,17 @@ import EmptyProject from '@/Components/Project/EmptyProject.vue'
 
 const page  = usePage();
 
-const { project } = defineProps({
-  project: Object
+const props = defineProps({
+  project: Object,
+  canEdit: Boolean
 });
 
 const chaptersByPart = computed(() => {
-    return project.parts.map(part => {
+    return props.project.parts.map(part => {
         return {
             ...part,
 
-            chapters: project.chapters.filter(chapter =>
+            chapters: props.project.chapters.filter(chapter =>
                 chapter.part_id === part.id
             )
         }
@@ -25,7 +26,7 @@ const chaptersByPart = computed(() => {
 })
 
 const unassignedChapters = computed(() =>
-    project.chapters.filter(chapter => !chapter.part_id)
+    props.project.chapters.filter(chapter => !chapter.part_id)
 )
 
 const cardSize = ref('medium')
@@ -36,7 +37,7 @@ const cardSize = ref('medium')
 
         <div class="mx-auto max-w-7xl px-6 py-8 space-y-6">
 
-            <ProjectHeader :project="project" v-model:cardSize="cardSize"/>
+            <ProjectHeader :project="project" :can-edit="canEdit" v-model:cardSize="cardSize"/>
 
             <div
                 v-if="chaptersByPart.length"
@@ -48,6 +49,7 @@ const cardSize = ref('medium')
                     :part="part"
                     :project="project"
                     :card-size="cardSize"
+                    :can-edit="canEdit"
                 />
 
                 <PartSection
