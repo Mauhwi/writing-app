@@ -12,7 +12,7 @@ const form = useForm({
 });
 
 const createProject = () => {
-  form.post(route('projects.chapters.store'), {
+  form.post(route('projects.store'), {
     preserveScroll: true,
     onSuccess: () => form.reset(),
   });

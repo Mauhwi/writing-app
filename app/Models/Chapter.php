@@ -12,7 +12,12 @@ class Chapter extends Model
         'project_id',
         'part_id',
         'order',
-        'content'
+        'content',
+        'word_count'
+    ];
+
+    protected $casts = [
+        'content' => 'array',
     ];
 
     protected static function booted(): void
@@ -38,5 +43,36 @@ class Chapter extends Model
 
     public function comments() {
         return $this->hasMany(Comment::class);
+    }
+
+    public static function extractText(array $node): string
+    {
+        $text = '';
+
+        if (($node['type'] ?? null) === 'text') {
+            $text .= $node['text'] ?? '';
+        }
+
+        foreach ($node['content'] ?? [] as $child) {
+            $text .= self::extractText($child) . ' ';
+        }
+
+        return $text;
+    }
+
+    public static function calculateWordCount(?array $content): int
+    {
+        if (!$content) {
+            return 0;
+        }
+
+        $text = self::extractText($content);
+
+        $text = preg_replace('/\s+/u', ' ', $text);
+        $text = trim($text);
+                
+        preg_match_all('/\S+/u', $text, $matches);
+
+        return count($matches[0]);
     }
 }

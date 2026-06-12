@@ -45,18 +45,14 @@ class ProjectController extends Controller
             'chapters'
         ]);
 
-        $project->chapters->transform(function ($chapter) {
-            $chapter->updated_at_human = $chapter->updated_at->diffForHumans();
-            if ($chapter->content)
-                $chapter->word_count = str_word_count(strip_tags($chapter->content));
-            return $chapter;
-        });
+        // $project->chapters->transform(function ($chapter) {
+        //     $chapter->updated_at_human = $chapter->updated_at->diffForHumans();
+        //     if ($chapter->content)
+        //         $chapter->word_count = str_word_count(strip_tags($chapter->content));
+        //     return $chapter;
+        // });
 
-        $project->word_count = 0;
-        foreach ($project->chapters as $chapter) {
-            if ($chapter->word_count)
-                $project->word_count += $chapter->word_count;
-        }
+        $project->word_count = $project->chapters->sum('word_count');
 
         $project->updated_at_human = $project->updated_at->diffForHumans(); 
         

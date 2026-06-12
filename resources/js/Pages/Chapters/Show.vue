@@ -9,6 +9,7 @@
   import ChapterComments from '@/Components/Chapter/ChapterComments.vue'
   import { Extension } from '@tiptap/core'
   import { Comment } from '@/Extensions/Comment'
+  import { CharacterCount } from '@tiptap/extensions'
 
   const props = defineProps({
     project: Object,
@@ -49,12 +50,12 @@
       StarterKit,
       FirstLineTabIndent,
       Comment,
+      CharacterCount,
     ],
     editable: props.canEdit,
   })
-
   const save = () => {
-    form.content = editor.value.getHTML()
+    form.content = editor.value.getJSON()
 
     form.patch(route('projects.chapters.updateContent', {
         project: props.chapter.project_id,
@@ -75,7 +76,6 @@
 
 <template>
     <div class="min-h-screen bg-[#0b0f17] text-zinc-100">
-
         <ChapterHeader 
         :project="project"
         :chapter-title="chapter.title"

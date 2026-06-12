@@ -14,9 +14,9 @@ class ChapterController extends Controller
 
         $chapter->updated_at = $chapter->updated_at->toISOString();
         
-        if ($chapter->content) {
-            $chapter->word_count = str_word_count(strip_tags($chapter->content));
-        }
+        // if ($chapter->content) {
+        //     $chapter->word_count = str_word_count(strip_tags($chapter->content));
+        // }
         
         return inertia('Chapters/Show', [
             'project' => [
@@ -52,6 +52,16 @@ class ChapterController extends Controller
             'title' => $validated['title'],
             'summary' => $validated['summary'],
             'part_id' => $latestPart->id,
+            'content' => [
+                'type' => 'doc',
+                'content' => [
+                    [
+                        'type' => 'paragraph',
+                    ],
+                ],
+            ],
+
+            'word_count' => 0,
         ]);
 
         return back()->with('success', 'Chapter created successfully.');
@@ -62,10 +72,13 @@ class ChapterController extends Controller
         $this->authorize('update', $project);
 
         $validated = $request->validate([
-            'content' => ['nullable', 'string'],
+            'content' => ['nullable', 'array'],
         ]);
-
-        $chapter->update($validated);
+        
+        $chapter->update([
+            'content' => $validated['content'],
+            'word_count' => Chapter::calculateWordCount($validated['content']),
+        ]);
 
         return back();
     }
