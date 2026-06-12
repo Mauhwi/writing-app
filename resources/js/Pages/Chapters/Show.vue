@@ -8,6 +8,7 @@
   import ChapterEditor from '@/Components/Chapter/ChapterEditor.vue'
   import ChapterComments from '@/Components/Chapter/ChapterComments.vue'
   import { Extension } from '@tiptap/core'
+  import { Comment } from '@/Extensions/Comment'
 
   const props = defineProps({
     project: Object,
@@ -46,7 +47,8 @@
     content: props.chapter.content,
     extensions: [
       StarterKit,
-      FirstLineTabIndent, // Inject our text-based tab utility
+      FirstLineTabIndent,
+      Comment,
     ],
     editable: props.canEdit,
   })
@@ -59,6 +61,16 @@
         chapter: props.chapter.id,
     }))
   }
+
+  const testComment = () => {
+    editor.value
+        .chain()
+        .focus()
+        .setMark('comment', {
+            anchor: 'test-anchor',
+        })
+        .run()
+}
 </script>
 
 <template>
@@ -74,7 +86,12 @@
         />
 
         <div class="flex">
-
+        <button
+            type="button"
+            @click="testComment"
+        >
+            Test Comment
+        </button>
             <ChapterSidebar />
 
             <div class="flex-1 flex flex-col">
