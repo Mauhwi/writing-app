@@ -7,6 +7,7 @@ use Inertia\Inertia;
 use App\Http\Controllers\DashboardController;
 use App\Http\Controllers\ProjectController;
 use App\Http\Controllers\ChapterController;
+use App\Http\Controllers\CommentThreadController;
 
 Route::get('/', function () {
     return Inertia::render('Auth/Login', [
@@ -53,6 +54,10 @@ Route::middleware('auth')
 
         Route::patch('/projects/{project}/chapters/{chapter}/details', [ChapterController::class, 'updateDetails'])
             ->name('projects.chapters.updateDetails');
+
+        Route::post(
+            '/projects/{project}/chapters/{chapter}/comment-threads', [CommentThreadController::class, 'store']
+        )->name('comment-threads.store');
     });
 
 Route::middleware('auth')->group(function () {

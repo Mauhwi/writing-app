@@ -3,16 +3,17 @@ import { Mark, mergeAttributes } from '@tiptap/core'
 export const Comment = Mark.create({
     name: 'comment',
 
+    inclusive: false,
+
+    addOptions() {
+        return {
+            HTMLAttributes: {},
+        }
+    },
+
     addAttributes() {
         return {
-            anchor: {
-                default: null,
-                parseHTML: element =>
-                    element.getAttribute('data-comment-anchor'),
-                renderHTML: attributes => ({
-                    'data-comment-anchor': attributes.anchor,
-                }),
-            },
+            anchor: { default: null },
         }
     },
 
@@ -20,6 +21,10 @@ export const Comment = Mark.create({
         return [
             {
                 tag: 'span[data-comment-anchor]',
+                getAttrs: (el) => ({
+                    anchor: el.getAttribute('data-comment-anchor'),
+                }),
+                preserveWhitespace: 'full',
             },
         ]
     },
@@ -28,8 +33,9 @@ export const Comment = Mark.create({
         return [
             'span',
             mergeAttributes(
-                HTMLAttributes,
+                this.options.HTMLAttributes,
                 {
+                    'data-comment-anchor': HTMLAttributes.anchor,
                     class: 'comment-highlight',
                 }
             ),

@@ -14,10 +14,10 @@ class ChapterController extends Controller
 
         $chapter->updated_at = $chapter->updated_at->toISOString();
         
-        // if ($chapter->content) {
-        //     $chapter->word_count = str_word_count(strip_tags($chapter->content));
-        // }
-        
+        $chapter->load([
+            'commentThreads.messages.user',
+        ]);
+
         return inertia('Chapters/Show', [
             'project' => [
                 'id' => $project->id,
@@ -25,6 +25,7 @@ class ChapterController extends Controller
             ],
             'chapter' => $chapter,
             'canEdit' => $project->user_id === auth()->id(),
+            'commentThreads' => $chapter->commentThreads,
         ]);
     }
 

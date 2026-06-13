@@ -25,7 +25,7 @@ class Project extends Model
     }
 
     public function comments() {
-        return $this->hasMany(Comment::class);
+        return $this->hasMany(CommentMessage::class);
     }
 
     public function owner()

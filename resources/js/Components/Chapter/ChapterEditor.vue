@@ -1,5 +1,5 @@
 <script setup>
-  import { useEditor, EditorContent } from '@tiptap/vue-3'
+  import { EditorContent } from '@tiptap/vue-3'
 
   const props = defineProps({
     chapter: Object,
@@ -35,7 +35,7 @@
             <div
                 class="flex justify-end text-sm text-slate-500 mt-4"
             >
-                <span>2,451 words</span>
+                <span>{{ chapter.word_count }} words</span>
             </div>
         </div>
     </div>

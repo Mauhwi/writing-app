@@ -14,7 +14,18 @@ return Application::configure(basePath: dirname(__DIR__))
         $middleware->web(append: [
             \App\Http\Middleware\HandleInertiaRequests::class,
             \Illuminate\Http\Middleware\AddLinkHeadersForPreloadedAssets::class,
-        ]);
+            ]
+        );
+
+    $middleware->trimStrings(except: [
+        'content',
+        'content.*',
+        'content.*.*',
+        'content.*.*.*',
+        'content.*.*.*.*',
+        'content.*.*.*.*.*',
+        'content.*.*.*.*.*.*',
+    ]);
 
         // Explicitly set the redirect path for authenticated guests
         $middleware->redirectTo(

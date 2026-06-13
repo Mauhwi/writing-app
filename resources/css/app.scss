@@ -184,33 +184,33 @@
 }
 
 @layer utilities {
-.scrollbar-writing {
-        overflow-y: auto;
-    scrollbar-gutter: stable;
-    scrollbar-width: thin;
-    scrollbar-color: transparent transparent;
-}
+    .scrollbar-writing {
+            overflow-y: auto;
+        scrollbar-gutter: stable;
+        scrollbar-width: thin;
+        scrollbar-color: transparent transparent;
+    }
 
-.scrollbar-writing::-webkit-scrollbar {
-    width: 6px;
-}
+    .scrollbar-writing::-webkit-scrollbar {
+        width: 6px;
+    }
 
-.scrollbar-writing::-webkit-scrollbar-track {
-    background: transparent;
-}
+    .scrollbar-writing::-webkit-scrollbar-track {
+        background: transparent;
+    }
 
-.scrollbar-writing::-webkit-scrollbar-thumb {
-    background: transparent;
-    border-radius: 9999px;
-}
+    .scrollbar-writing::-webkit-scrollbar-thumb {
+        background: transparent;
+        border-radius: 9999px;
+    }
 
-.scrollbar-writing:hover::-webkit-scrollbar-thumb {
-    background: rgba(63, 63, 70, 0.5);
-}
+    .scrollbar-writing:hover::-webkit-scrollbar-thumb {
+        background: rgba(63, 63, 70, 0.5);
+    }
 
-.scrollbar-writing:hover {
-    scrollbar-color: rgba(63, 63, 70, 0.5) transparent;
-}
+    .scrollbar-writing:hover {
+        scrollbar-color: rgba(63, 63, 70, 0.5) transparent;
+    }
 
     .scrollbar-writing:hover,
     .scrollbar-writing:focus-within {

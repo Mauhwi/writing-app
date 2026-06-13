@@ -41,8 +41,13 @@ class Chapter extends Model
         return $this->belongsTo(Part::class);
     }
 
+    public function commentThreads()
+    {
+        return $this->hasMany(CommentThread::class);
+    }
+
     public function comments() {
-        return $this->hasMany(Comment::class);
+        return $this->hasMany(CommentMessage::class);
     }
 
     public static function extractText(array $node): string

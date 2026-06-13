@@ -1,4 +1,8 @@
 <script setup>
+  const props = defineProps({
+    thread: Object,
+  })
+
 const comments = [
     {
         author: 'Reader',
@@ -34,28 +38,26 @@ const comments = [
                     3
                 </span>
             </div>
-
-            <div class="space-y-4">
-
+            <div v-if="thread" class="space-y-4">
                 <div
-                    v-for="comment in comments"
-                    :key="comment.text"
+                    v-for="message in thread.messages"
+                    :key="message.id"
                     class="bg-slate-900 border border-slate-800 rounded-xl p-4"
                 >
                     <div
                         class="font-medium mb-2"
                     >
-                        {{ comment.author }}
+                    {{ message.user.name }}
                     </div>
 
                     <p
                         class="text-slate-300 text-sm"
                     >
-                        {{ comment.text }}
+                    {{ message.body }}
                     </p>
                 </div>
-
             </div>
+
 
         </div>
     </aside>
