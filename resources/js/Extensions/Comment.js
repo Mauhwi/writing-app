@@ -54,6 +54,33 @@ export const Comment = Mark.create({
                 () =>
                 ({ commands }) =>
                     commands.unsetMark(this.name),
+
+            unsetCommentByAnchor:
+                anchor =>
+                ({ state, dispatch }) => {
+                    const tr = state.tr
+
+                    state.doc.descendants(
+                        (node, pos) => {
+                            node.marks.forEach(mark => {
+                                if (
+                                    mark.type.name === 'comment' &&
+                                    mark.attrs.anchor === anchor
+                                ) {
+                                    tr.removeMark(
+                                        pos,
+                                        pos + node.nodeSize,
+                                        mark.type
+                                    )
+                                }
+                            })
+                        }
+                    )
+
+                    dispatch(tr)
+
+                    return true
+                },
         }
     },
 })

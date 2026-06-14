@@ -8,6 +8,7 @@ use App\Http\Controllers\DashboardController;
 use App\Http\Controllers\ProjectController;
 use App\Http\Controllers\ChapterController;
 use App\Http\Controllers\CommentThreadController;
+use App\Http\Controllers\CommentMessageController;
 
 Route::get('/', function () {
     return Inertia::render('Auth/Login', [
@@ -58,6 +59,15 @@ Route::middleware('auth')
         Route::post(
             '/projects/{project}/chapters/{chapter}/comment-threads', [CommentThreadController::class, 'store']
         )->name('comment-threads.store');
+
+        Route::post('/comment-threads/{thread}/messages', [CommentMessageController::class, 'store']
+        )->name('comment-messages.store');
+
+        Route::delete('/comment-messages/{message}', [CommentMessageController::class, 'destroy']
+        )->name('comment-messages.destroy');
+
+        Route::delete('/comment-threads/{thread}', [CommentThreadController::class, 'destroy']
+        )->name('comment-threads.destroy');
     });
 
 Route::middleware('auth')->group(function () {

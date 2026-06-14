@@ -89,7 +89,6 @@
   })
   const save = () => {
     form.content = editor.value.getJSON()
-    console.log('SAVING:', JSON.stringify(form.content, null, 2))
 
     form.patch(route('projects.chapters.updateContent', {
         project: props.chapter.project_id,
@@ -102,6 +101,8 @@
   const showCommentModal = ref(false)
   const pendingSelection = ref(null)
   const activeThread = ref(null)
+  const replyBody = ref('')
+  const commentThreads = ref([...props.commentThreads])
 
   const hasSelection = computed(() => {
     if (!editor.value) {
@@ -125,6 +126,9 @@
   }
 
   const createComment = async () => {
+    if (!commentBody.value.trim()) {
+        return
+    }
     if (!pendingSelection.value) {
         return
     }
@@ -142,6 +146,8 @@
     )
 
     const anchor = response.data.anchor
+    const thread = response.data.thread
+    commentThreads.value.push(thread)
     
     editor.value
     .chain()
@@ -157,19 +163,91 @@
 
     save()
 
+    activeThread.value = thread
     commentBody.value = ''
     showCommentModal.value = false
     pendingSelection.value = null
   }
 
-  const threadMap = computed(() => {
-    return Object.fromEntries(
-        props.commentThreads.map(thread => [
-            thread.anchor,
-            thread,
-        ])
+    const threadMap = computed(() => {
+        return Object.fromEntries(
+            commentThreads.value.map(thread => [
+                thread.anchor,
+                thread,
+            ])
+        )
+    })
+
+  const submitReply = async () => {
+    if (
+        !activeThread.value ||
+        !replyBody.value.trim()
+    ) {
+        return
+    }
+
+    const response = await axios.post(
+        route(
+            'comment-messages.store',
+            activeThread.value.id
+        ),
+        {
+            body: replyBody.value,
+        }
     )
-  })
+
+    activeThread.value.messages.push(
+        response.data
+    )
+
+    replyBody.value = ''
+  }
+
+  const deleteMessage = async (messageId) => {
+    await axios.delete(
+        route(
+            'comment-messages.destroy',
+            messageId
+        )
+    )
+
+    activeThread.value.messages =
+        activeThread.value.messages.filter(
+            message => message.id !== messageId
+        )
+  }
+
+  const deleteThread = async () => {
+    if (!activeThread.value) {
+        return
+    }
+
+    const threadId = activeThread.value.id
+
+    const response = await axios.delete(
+        route(
+            'comment-threads.destroy',
+            threadId
+        )
+    )
+
+    const anchor = response.data.anchor
+
+    commentThreads.value =
+        commentThreads.value.filter(
+            thread => thread.id !== threadId
+        )
+
+    editor.value
+        .chain()
+        .focus()
+        .unsetCommentByAnchor(anchor)
+        .run()
+
+    save()
+
+    activeThread.value = null
+  }
 
   watch(
       editor,
@@ -215,6 +293,11 @@
 
           <ChapterComments 
             :thread="activeThread"
+            :reply-body="replyBody"
+            @update:reply-body="replyBody = $event"
+            @reply="submitReply"
+            @deleteMessage="deleteMessage"
+            @delete-thread="deleteThread"
           />
 
       </div>
