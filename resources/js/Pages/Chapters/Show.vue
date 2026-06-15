@@ -1,11 +1,11 @@
 <script setup>
   import { useEditor } from '@tiptap/vue-3'
-  import { computed, ref, watch } from 'vue';
+  import { computed, ref } from 'vue';
   import StarterKit from '@tiptap/starter-kit'
   import { useForm } from '@inertiajs/vue3'
   import { Extension } from '@tiptap/core'
   import { Comment } from '@/Extensions/Comment'
-  import { CharacterCount } from '@tiptap/extensions'
+  //import { CharacterCount } from '@tiptap/extensions'
   import axios from 'axios'
   //component
   import ChapterHeader from '@/Components/Chapter/ChapterHeader.vue'
@@ -36,7 +36,7 @@
         Tab: () => {
           const { state, commands } = this.editor;
           const { selection } = state;
-          const { $anchor } = selection;
+          //const { $anchor } = selection;
 
           // Force a rule: Only insert the indent if the cursor is at the very beginning of the paragraph
           //if ($anchor.parentOffset === 0) {
@@ -56,7 +56,7 @@
       StarterKit,
       FirstLineTabIndent,
       Comment,
-      CharacterCount,
+      //CharacterCount,
     ],
     editable: props.canEdit,
     editorProps: {
@@ -104,14 +104,12 @@
   const replyBody = ref('')
   const commentThreads = ref([...props.commentThreads])
 
-  const hasSelection = computed(() => {
+  const selectionHasComment = computed(() => {
     if (!editor.value) {
         return false
-  }
+    }
 
-    const { from, to } = editor.value.state.selection
-
-    return from !== to
+    return editor.value.isActive('comment')
   })
 
   const openCommentModal = () => {
@@ -169,14 +167,14 @@
     pendingSelection.value = null
   }
 
-    const threadMap = computed(() => {
-        return Object.fromEntries(
-            commentThreads.value.map(thread => [
-                thread.anchor,
-                thread,
-            ])
-        )
-    })
+  const threadMap = computed(() => {
+    return Object.fromEntries(
+        commentThreads.value.map(thread => [
+            thread.anchor,
+            thread,
+        ])
+    )
+  })
 
   const submitReply = async () => {
     if (
@@ -201,20 +199,6 @@
     )
 
     replyBody.value = ''
-  }
-
-  const deleteMessage = async (messageId) => {
-    await axios.delete(
-        route(
-            'comment-messages.destroy',
-            messageId
-        )
-    )
-
-    activeThread.value.messages =
-        activeThread.value.messages.filter(
-            message => message.id !== messageId
-        )
   }
 
   const deleteThread = async () => {
@@ -249,23 +233,55 @@
     activeThread.value = null
   }
 
-  watch(
-      editor,
-      (newEditor) => {
-          if (!newEditor) return
+  const deleteMessage = async (messageId) => {
+    const response = await axios.delete(
+        route(
+            'comment-messages.destroy',
+            messageId
+        )
+    )
 
-          console.log('TEXT:', newEditor.getText())
-          console.log('HTML:', newEditor.getHTML())
-          console.log('JSON:', newEditor.getJSON())
-      },
-      { immediate: true }
-  )
+    activeThread.value.messages =
+        activeThread.value.messages.filter(
+            message => message.id !== messageId
+        )
+
+    if (response.data.threadDeleted) {
+        commentThreads.value =
+            commentThreads.value.filter(
+                thread =>
+                    thread.id !== response.data.threadId
+            )
+
+        editor.value
+            .chain()
+            .focus()
+            .unsetCommentByAnchor(
+                response.data.anchor
+            )
+            .run()
+
+        save()
+
+        activeThread.value = null
+    }
+  }
+
+  
+//   watch(
+//       editor,
+//       (newEditor) => {
+//           if (!newEditor) return
+
+//           console.log('TEXT:', newEditor.getText())
+//           console.log('HTML:', newEditor.getHTML())
+//           console.log('JSON:', newEditor.getJSON())
+//       },
+//       { immediate: true }
+//   )
 </script>
 
 <template>
-  <button v-if="hasSelection" @click="openCommentModal">
-      Comment
-  </button>
   <div class="min-h-screen bg-[#0b0f17] text-zinc-100">
       <ChapterHeader 
       :project="project"
@@ -287,6 +303,8 @@
               :editor="editor"
               :chapter="chapter"
               :canEdit="canEdit"
+              :selectionHasComment = "selectionHasComment"
+              @comment="openCommentModal"
               />
 
           </div>
@@ -296,7 +314,7 @@
             :reply-body="replyBody"
             @update:reply-body="replyBody = $event"
             @reply="submitReply"
-            @deleteMessage="deleteMessage"
+            @delete-message="deleteMessage"
             @delete-thread="deleteThread"
           />
 

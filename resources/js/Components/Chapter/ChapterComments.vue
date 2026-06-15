@@ -7,7 +7,7 @@
     defineEmits([
         'update:reply-body',
         'reply',
-        'deleteMessage',
+        'delete-message',
         'delete-thread',
     ])
 </script>
@@ -46,8 +46,22 @@
         :key="message.id"
         class="bg-slate-900 border border-slate-800 rounded-xl p-4"
     >
-        <div class="font-medium mb-2">
-            {{ message.user.name }}
+        <div
+            class="flex justify-between items-center mb-2"
+        >
+            <div class="font-medium">
+                {{ message.user.name }}
+            </div>
+
+            <button
+                @click="$emit(
+                    'delete-message',
+                    message.id
+                )"
+                class="text-xs text-red-400"
+            >
+                Delete
+            </button>
         </div>
 
         <p class="text-slate-300 text-sm">

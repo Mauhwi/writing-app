@@ -1,12 +1,16 @@
 <script setup>
   import { EditorContent } from '@tiptap/vue-3'
+  import { BubbleMenu } from '@tiptap/vue-3/menus'
 
   const props = defineProps({
     chapter: Object,
     editor: Object,
-    canEdit: Boolean
+    canEdit: Boolean,
+    selectionHasComment: Boolean 
   })
 
+  defineEmits(['comment'])
+  
 </script>
 
 <template>
@@ -28,6 +32,22 @@
                 <div
                     class="font-merriweather font-light text-base md:text-lg leading-loose tracking-wide text-slate-300 text-justify mb-6"
                 >
+                    <BubbleMenu
+                        v-if="editor"
+                        :editor="editor"
+                        :tippy-options="{
+                            placement: 'top',
+                            duration: 100,
+                        }"
+                    >
+                        <button
+                         v-if="!selectionHasComment"
+                            @click="$emit('comment')"
+                            class="px-3 py-1.5 rounded-full bg-slate-800 border border-slate-700 text-sm hover:bg-slate-700"
+                        >
+                            Add Comment
+                        </button>
+                    </BubbleMenu>
                     <editor-content :editor="editor" :spellcheck="canEdit"/>
                 </div>
             </div>

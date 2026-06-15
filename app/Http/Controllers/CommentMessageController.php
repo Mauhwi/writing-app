@@ -38,6 +38,7 @@ class CommentMessageController extends Controller
 
             return response()->json([
                 'threadDeleted' => true,
+                'threadId' => $thread->id,
                 'anchor' => $anchor,
             ]);
         }
