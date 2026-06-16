@@ -43,6 +43,19 @@
         @apply focus:border-[#5841d8];
     }
 
+    .comment-textarea {
+        @apply bg-slate-800/50 text-zinc-100 w-full;
+        @apply rounded border border-slate-700 focus:border-slate-700; 
+        @apply p-2 text-black text-zinc-100;
+    }
+
+     .comment-textarea:focus {
+        @apply bg-slate-800/50 text-zinc-100 w-full;
+        @apply rounded border border-slate-700 focus:border-slate-700; 
+        @apply p-2 text-black text-zinc-100;
+        --tw-ring-color: #5032bd;
+    }
+
     .form-modal {
         @apply bg-[#0e131f] p-6 rounded-lg w-full max-w-md shadow-xl;
         @apply text-sm text-zinc-100;

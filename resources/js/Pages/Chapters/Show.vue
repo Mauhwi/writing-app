@@ -35,7 +35,7 @@
         // When pressing Tab, physically insert an Em Space character at the cursor position
         Tab: () => {
           const { state, commands } = this.editor;
-          const { selection } = state;
+          //const { selection } = state;
           //const { $anchor } = selection;
 
           // Force a rule: Only insert the indent if the cursor is at the very beginning of the paragraph
@@ -328,7 +328,7 @@
 
         <textarea
             v-model="commentBody"
-            class="w-full rounded border p-2 text-black"
+            class="bg-[#131a26] px-4 py-3 text-zinc-100 w-full rounded border p-2 text-black"
             rows="5"
         />
 
