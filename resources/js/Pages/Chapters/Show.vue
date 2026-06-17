@@ -1,7 +1,7 @@
 <script setup>
 import { useEditor } from '@tiptap/vue-3'
-import { computed, ref } from 'vue';
-import { useForm } from '@inertiajs/vue3'
+import { computed, ref, watch } from 'vue';
+import { useForm, usePage } from '@inertiajs/vue3'
 import { Extension } from '@tiptap/core'
 import StarterKit from '@tiptap/starter-kit'
 import TextAlign from '@tiptap/extension-text-align'
@@ -27,6 +27,9 @@ const form = useForm({
     content: props.chapter.content,
 })
 
+const page = usePage()
+
+const currentUser = computed(() => page.props.auth.user)
 
 const FirstLineTabIndent = Extension.create({
     name: 'firstLineTabIndent',
@@ -94,10 +97,15 @@ const editor = useEditor({
 const save = () => {
     form.content = editor.value.getJSON()
 
-    form.patch(route('projects.chapters.updateContent', {
-        project: props.chapter.project_id,
-        chapter: props.chapter.id,
-    }))
+    form.patch(
+        route('projects.chapters.updateContent', {
+            project: props.chapter.project_id,
+            chapter: props.chapter.id,
+        }),
+        {
+            preserveScroll: true,
+        }
+    )
 }
 
 document.addEventListener('keydown', function(event) {
@@ -278,23 +286,9 @@ const deleteMessage = async (messageId) => {
         activeThread.value = null
     }
 }
-
-
-//   watch(
-//       editor,
-//       (newEditor) => {
-//           if (!newEditor) return
-
-//           console.log('TEXT:', newEditor.getText())
-//           console.log('HTML:', newEditor.getHTML())
-//           console.log('JSON:', newEditor.getJSON())
-//       },
-//       { immediate: true }
-//   )
 </script>
 
 <template>
-    {{ project }}
     <div class="min-h-screen bg-[#0b0f17] text-zinc-100">
         <ChapterHeader :project="project" :chapter-title="chapter.title" :updated-at="chapter.updated_at"
             :order="chapter.order" :processing="form.processing" @save="save" />

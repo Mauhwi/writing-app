@@ -2,27 +2,6 @@
 const props = defineProps({
     parts: Array,
 })
-// const parts = [
-//     {
-//         title: 'Part I - The World Before',
-//         chapters: [
-//             'The Beginning',
-//             'A Flicker of Hope',
-//             'Shadows Awake',
-//             'The Lost Path',
-//             'Shadows of the Past',
-//             'Beneath the Surface',
-//         ],
-//     },
-//     {
-//         title: 'Part II - The Rise of Shadows',
-//         chapters: [
-//             'Echoes of the Past',
-//             'Fractured Alliances',
-//             'The Silent War',
-//         ],
-//     },
-// ]
 </script>
 
 <template>
