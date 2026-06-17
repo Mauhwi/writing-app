@@ -1,25 +1,28 @@
 <script setup>
-const parts = [
-    {
-        title: 'Part I - The World Before',
-        chapters: [
-            'The Beginning',
-            'A Flicker of Hope',
-            'Shadows Awake',
-            'The Lost Path',
-            'Shadows of the Past',
-            'Beneath the Surface',
-        ],
-    },
-    {
-        title: 'Part II - The Rise of Shadows',
-        chapters: [
-            'Echoes of the Past',
-            'Fractured Alliances',
-            'The Silent War',
-        ],
-    },
-]
+const props = defineProps({
+    parts: Array,
+})
+// const parts = [
+//     {
+//         title: 'Part I - The World Before',
+//         chapters: [
+//             'The Beginning',
+//             'A Flicker of Hope',
+//             'Shadows Awake',
+//             'The Lost Path',
+//             'Shadows of the Past',
+//             'Beneath the Surface',
+//         ],
+//     },
+//     {
+//         title: 'Part II - The Rise of Shadows',
+//         chapters: [
+//             'Echoes of the Past',
+//             'Fractured Alliances',
+//             'The Silent War',
+//         ],
+//     },
+// ]
 </script>
 
 <template>
@@ -66,7 +69,7 @@ const parts = [
                         :key="chapter"
                         class="w-full text-left px-3 py-2 rounded-lg hover:bg-slate-800 transition-colors"
                     >
-                        {{ chapter }}
+                        {{ chapter.title }}
                     </button>
                 </div>
             </div>

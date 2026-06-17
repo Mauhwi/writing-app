@@ -62,15 +62,30 @@
 </template>
 
 <style>
-.ProseMirror {
-    outline: none;
-    text-indent: 1em;
-}
-.tiptap p {
-  margin-bottom: 1rem;
-}
+    .ProseMirror {
+        outline: none;
+        text-indent: 1em;
+    }
+    .tiptap p {
+        margin-bottom: 1rem;
+    }
 
-.tiptap p:last-child {
-  margin-bottom: 0;
-}
+    .tiptap p:last-child {
+        margin-bottom: 0;
+    }
+
+    blockquote {
+        border-left: 3px solid #475569; /* slate-600 */
+        margin: 1.5rem 0;
+        padding-left: 1rem;
+    }
+
+    hr {
+        border: none;
+        border-top: 1px solid #475569;
+        margin: 2rem 0;
+    }
+    h2 {
+        font-size: 1.3rem;
+    }
 </style>

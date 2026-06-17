@@ -18,11 +18,25 @@ class ChapterController extends Controller
             'commentThreads.messages.user',
         ]);
 
+        $projectArray = [
+            'id' => $project->id,
+            'title' => $project->title,
+            'parts' => $project->parts->map(function ($part) {
+                return [
+                    'id' => $part->id,
+                    'title' => $part->title,
+                    'chapters' => $part->chapters->map(function ($chapter) {
+                        return [
+                            'id' => $chapter->id,
+                            'title' => $chapter->title,
+                        ];
+                    })->toArray()
+                ];
+            })->toArray()
+        ];
+
         return inertia('Chapters/Show', [
-            'project' => [
-                'id' => $project->id,
-                'title' => $project->title,
-            ],
+            'project' => $projectArray,
             'chapter' => $chapter,
             'canEdit' => $project->user_id === auth()->id(),
             'commentThreads' => $chapter->commentThreads,
