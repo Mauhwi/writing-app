@@ -50,6 +50,9 @@ Route::middleware('auth')
         Route::get('/projects/{project}/chapters/{chapter}', [ChapterController::class, 'show'])
             ->name('projects.chapters.show');
 
+        Route::get('/projects/{project}/chapters/{chapter}/content', [ChapterController::class, 'getContent'])
+            ->name('projects.chapters.content');
+
         Route::patch('/projects/{project}/chapters/{chapter}/content', [ChapterController::class, 'updateContent'])
             ->name('projects.chapters.updateContent');
 

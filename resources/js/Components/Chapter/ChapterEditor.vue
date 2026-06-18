@@ -35,6 +35,12 @@
                     <BubbleMenu
                         v-if="editor"
                         :editor="editor"
+                        :should-show="() => {
+                            const { state } = editor
+                            const { from, to } = state.selection
+
+                            return from !== to
+                        }"
                         :tippy-options="{
                             placement: 'top',
                             duration: 100,

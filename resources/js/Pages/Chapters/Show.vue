@@ -303,6 +303,11 @@ onMounted(() => {
             return
         }
 
+        if (payload.cleared) {
+            activeRemoteSelection.value = null
+            return
+        }
+
         activeRemoteSelection.value = payload
 
         remoteSelections.value[payload.userId] = payload
@@ -314,6 +319,108 @@ onMounted(() => {
             )
         )
     })
+
+    let isRefreshingContent = false
+
+    channel.listen('.comment.message.created', async (e) => {
+        const thread = commentThreads.value.find(
+            t => t.id === e.thread_id
+        )
+
+        if (thread) {
+            const exists = thread.messages.some(m => m.id === e.message.id)
+            if (!exists) {
+                thread.messages.push(e.message)
+            }
+        }
+
+        if (isRefreshingContent) return
+        isRefreshingContent = true
+
+        const container = editor.value.view.dom.parentElement
+        const scrollTop = container.scrollTop
+
+        try {
+            const response = await axios.get(
+                route('projects.chapters.content', {
+                    project: props.project.id,
+                    chapter: props.chapter.id,
+                })
+            )
+
+            editor.value.commands.setContent(
+                response.data.content,
+                false
+            )
+
+            requestAnimationFrame(() => {
+                container.scrollTop = scrollTop
+            })
+
+        } finally {
+            setTimeout(() => {
+                isRefreshingContent = false
+            }, 200)
+        }
+    })
+
+    channel.listen('.comment.message.deleted', (e) => {
+
+        if (e.threadDeleted) {
+            commentThreads.value =
+                commentThreads.value.filter(t => t.id !== e.threadIdDeleted)
+
+            if (activeThread.value?.id === e.threadIdDeleted) {
+                activeThread.value = null
+            }
+
+            return
+        }
+
+        const thread = commentThreads.value.find(t => t.id === e.threadId)
+
+        if (thread) {
+            thread.messages =
+                thread.messages.filter(m => m.id !== e.messageId)
+        }
+    })
+
+    let isRefreshing = false
+
+    channel.listen('.chapter.content.updated', async () => {
+        if (!editor.value) return
+        if (isRefreshing) return
+
+        isRefreshing = true
+
+        const container = editor.value.view.dom.parentElement
+        const scrollTop = container.scrollTop
+
+        try {
+            const { data } = await axios.get(
+                route('projects.chapters.content', {
+                    project: props.project.id,
+                    chapter: props.chapter.id,
+                })
+            )
+
+            editor.value.commands.setContent(data.content, false)
+
+            requestAnimationFrame(() => {
+                container.scrollTop = scrollTop
+            })
+
+        } finally {
+            setTimeout(() => {
+                isRefreshing = false
+            }, 200)
+        }
+    })
+
+    editor.value.on('selectionUpdate', () => {
+        sendSelection(editor.value)
+    })
+
 })
 
 onBeforeUnmount(() => {
@@ -321,7 +428,6 @@ onBeforeUnmount(() => {
 })
 
 function sendSelection(editor) {
-    console.log('sendSelection')
     const { from, to } = editor.state.selection
 
     console.log({ from, to })
@@ -336,41 +442,17 @@ function sendSelection(editor) {
         })
 }
 
-onMounted(() => {
-    editor.value.on('selectionUpdate', () => {
-        sendSelection(editor.value)
-    })
-})
-
-watch(activeRemoteSelection, (selection) => {
-    if (!selection || !editor.value) {
-        return
-    }
-
-    const coords =
-        editor.value.view.coordsAtPos(
-            selection.from
-        )
-
-    remoteLabelPosition.value = {
-        top: coords.top - 32,
-        left: coords.left,
-        name: selection.userName,
-        role: selection.role,
-    }
-})
-
 let labelTimeout
 
 watch(activeRemoteSelection, (selection) => {
-    if (!selection || !editor.value) {
+    clearTimeout(labelTimeout)
+
+    if (!selection || !selection.from || !editor.value) {
+        remoteLabelPosition.value = null
         return
     }
 
-    const coords =
-        editor.value.view.coordsAtPos(
-            selection.from
-        )
+    const coords = editor.value.view.coordsAtPos(selection.from)
 
     remoteLabelPosition.value = {
         top: coords.top - 32,
@@ -379,11 +461,9 @@ watch(activeRemoteSelection, (selection) => {
         role: selection.role,
     }
 
-    clearTimeout(labelTimeout)
-
     labelTimeout = setTimeout(() => {
         remoteLabelPosition.value = null
-    }, 3000)
+    }, 1000)
 })
 
 document.addEventListener('selectionchange', () => {
@@ -463,12 +543,10 @@ document.addEventListener('selectionchange', () => {
     border-radius: 3px;
 }
 
-/* Author selection */
 .remote-selection.role-author {
     background: rgba(120, 180, 255, 0.35);
 }
 
-/* Reader selection */
 .remote-selection.role-reader {
     background: rgba(255, 120, 180, 0.35);
 }

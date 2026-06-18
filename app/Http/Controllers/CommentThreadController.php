@@ -6,6 +6,8 @@ use Illuminate\Http\Request;
 use App\Models\Project;
 use App\Models\Chapter;
 use App\Models\CommentThread;
+use App\Events\CommentMessageCreated;
+use App\Events\CommentMessageDeleted;
 
 class CommentThreadController extends Controller
 {
@@ -25,12 +27,14 @@ class CommentThreadController extends Controller
             'created_by' => auth()->id(),
         ]);
 
-        $thread->messages()->create([
+        $message = $thread->messages()->create([
             'user_id' => auth()->id(),
             'body' => $validated['body'],
         ]);
 
         $thread->load('messages.user');
+
+        event(new CommentMessageCreated($thread->id, $message));
 
         return response()->json([
             'anchor' => $thread->anchor,

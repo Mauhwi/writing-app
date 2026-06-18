@@ -5,6 +5,8 @@ namespace App\Http\Controllers;
 use Illuminate\Http\Request;
 use App\Models\CommentThread;
 use App\Models\CommentMessage;
+use App\Events\CommentMessageCreated;
+use App\Events\CommentMessageDeleted;
 
 class CommentMessageController extends Controller
 {
@@ -23,6 +25,8 @@ class CommentMessageController extends Controller
 
         $message->load('user');
 
+        event(new CommentMessageCreated($thread->id, $message));
+
         return response()->json($message);
     }
 
@@ -33,7 +37,17 @@ class CommentMessageController extends Controller
 
         $message->delete();
 
-        if ($thread->messages()->count() === 0) {
+        $threadDeleted = $thread->messages()->count() === 0;
+
+        event(new CommentMessageDeleted(
+            $thread->id,
+            $message->id,
+            $threadDeleted,
+            $threadDeleted ? $thread->id : null,
+            $threadDeleted ? $anchor : null,
+        ));
+
+        if ($threadDeleted) {
             $thread->delete();
 
             return response()->json([

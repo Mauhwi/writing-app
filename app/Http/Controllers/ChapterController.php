@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use Illuminate\Http\Request;
 use App\Models\Project;
 use App\Models\Chapter;
+use App\Events\ChapterContentUpdated;
 
 class ChapterController extends Controller
 {
@@ -35,11 +36,26 @@ class ChapterController extends Controller
             })->toArray()
         ];
 
+        // dd(
+        //     $chapter->commentThreads->count(),
+        //     $chapter->commentThreads
+        // );
+
         return inertia('Chapters/Show', [
             'project' => $projectArray,
             'chapter' => $chapter,
             'canEdit' => $project->user_id === auth()->id(),
             'commentThreads' => $chapter->commentThreads,
+        ]);
+    }
+
+    public function getContent(Project $project, Chapter $chapter)
+    {
+        $this->authorize('view', $project);
+
+        return response()->json([
+            'content' => $chapter->content,
+            'updated_at' => $chapter->updated_at,
         ]);
     }
 
@@ -94,6 +110,12 @@ class ChapterController extends Controller
             'content' => $validated['content'],
             'word_count' => Chapter::calculateWordCount($validated['content']),
         ]);
+
+        broadcast(
+            new ChapterContentUpdated(
+                $chapter->id
+            )
+        )->toOthers();
 
         return back();
     }
