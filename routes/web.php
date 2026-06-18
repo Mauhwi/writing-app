@@ -59,6 +59,9 @@ Route::middleware('auth')
         Route::patch('/projects/{project}/chapters/{chapter}/details', [ChapterController::class, 'updateDetails'])
             ->name('projects.chapters.updateDetails');
 
+        Route::patch('projects/{project}/chapters/{chapter}/comment-marks', [ChapterController::class, 'updateCommentMarks']
+        )->name('chapters.updateCommentMarks');
+
         Route::post(
             '/projects/{project}/chapters/{chapter}/comment-threads', [CommentThreadController::class, 'store']
         )->name('comment-threads.store');

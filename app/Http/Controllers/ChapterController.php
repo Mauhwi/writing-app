@@ -133,4 +133,90 @@ class ChapterController extends Controller
 
         return back();
     }
+
+    public function updateCommentMarks(Request $request, Project $project, Chapter $chapter)
+    {
+        $this->authorize('view', $project);
+
+        $validated = $request->validate([
+            'content' => 'required|array',
+        ]);
+
+        // Strip comment marks from both, then compare
+        $incoming = $this->stripCommentMarks($validated['content']);
+        $stored   = $this->stripCommentMarks($chapter->content);
+
+        //dd($incoming, $stored);
+
+        if (json_encode($this->normalizeForComparison($incoming)) !== json_encode($this->normalizeForComparison($stored))) {
+            abort(403, 'Only comment mark changes are permitted.');
+        }
+
+        $chapter->update(['content' => $validated['content']]);
+
+        return response()->json(['ok' => true]);
+    }
+
+    private function stripCommentMarks(array $node): array
+    {
+        if (isset($node['marks'])) {
+            $node['marks'] = array_values(
+                array_filter(
+                    $node['marks'],
+                    fn($mark) => $mark['type'] !== 'comment'
+                )
+            );
+
+            if (empty($node['marks'])) {
+                unset($node['marks']);
+            }
+        }
+
+        if (isset($node['content'])) {
+            $node['content'] = array_map(
+                fn($child) => $this->stripCommentMarks($child),
+                $node['content']
+            );
+
+            $node['content'] = $this->mergeAdjacentTextNodes($node['content']);
+        }
+
+        return $node;
+    }
+
+    private function mergeAdjacentTextNodes(array $nodes): array
+    {
+        $merged = [];
+
+        foreach ($nodes as $node) {
+            $last = end($merged);
+
+            if (
+                $last &&
+                $last['type'] === 'text' &&
+                $node['type'] === 'text' &&
+                ($last['marks'] ?? []) === ($node['marks'] ?? [])
+            ) {
+                $merged[array_key_last($merged)]['text'] .= $node['text'];
+            } else {
+                $merged[] = $node;
+            }
+        }
+
+        return array_values($merged);
+    }
+
+    private function normalizeForComparison(array $node): array
+    {
+        ksort($node);
+
+        if (isset($node['content'])) {
+            $node['content'] = array_map(
+                fn($child) => $this->normalizeForComparison($child),
+                $node['content']
+            );
+        }
+
+        return $node;
+    }
 }

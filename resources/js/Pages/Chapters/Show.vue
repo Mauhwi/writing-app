@@ -181,7 +181,8 @@ const createComment = async () => {
         })
         .run()
 
-    save()
+    //save()
+    saveCommentMarks()
 
     activeThread.value = thread
     commentBody.value = ''
@@ -289,6 +290,17 @@ const deleteMessage = async (messageId) => {
     }
 }
 
+const saveCommentMarks = () => {
+    axios.patch(
+        route('chapters.updateCommentMarks', {
+            project: props.project.id,
+            chapter: props.chapter.id,
+        }),
+        {
+            content: editor.value.getJSON(),
+        }
+    )
+}
 //whispers
 const remoteSelections = ref({})
 const activeRemoteSelection = ref(null)
@@ -429,8 +441,6 @@ onBeforeUnmount(() => {
 
 function sendSelection(editor) {
     const { from, to } = editor.state.selection
-
-    console.log({ from, to })
 
     Echo.private(`chapter.${props.chapter.id}`)
         .whisper('selection', {
