@@ -1,11 +1,12 @@
 <script setup>
-import { useEditor } from '@tiptap/vue-3'
-import { computed, ref, watch } from 'vue';
+import { useEditor, EditorContent } from '@tiptap/vue-3'
+import { computed, ref, watch, onMounted, onBeforeUnmount } from 'vue';
 import { useForm, usePage } from '@inertiajs/vue3'
 import { Extension } from '@tiptap/core'
 import StarterKit from '@tiptap/starter-kit'
 import TextAlign from '@tiptap/extension-text-align'
 import { Comment } from '@/Extensions/Comment'
+import { remoteSelectionExtension } from '@/Extensions/RemoteSelection'
 //import { CharacterCount } from '@tiptap/extensions'
 import axios from 'axios'
 //component
@@ -60,6 +61,7 @@ const editor = useEditor({
         StarterKit,
         FirstLineTabIndent,
         Comment,
+        remoteSelectionExtension(),
         TextAlign.configure({
           types: ['heading', 'paragraph'],
         }),
@@ -286,6 +288,114 @@ const deleteMessage = async (messageId) => {
         activeThread.value = null
     }
 }
+
+//whispers
+const remoteSelections = ref({})
+const activeRemoteSelection = ref(null)
+const remoteLabelPosition = ref(null)
+let channel
+
+onMounted(() => {
+    channel = Echo.private(`chapter.${props.chapter.id}`)
+
+    channel.listenForWhisper('selection', (payload) => {
+        if (payload.userId === currentUser.value.id) {
+            return
+        }
+
+        activeRemoteSelection.value = payload
+
+        remoteSelections.value[payload.userId] = payload
+
+        editor.value.view.dispatch(
+            editor.value.state.tr.setMeta(
+                'remoteSelection',
+                remoteSelections.value
+            )
+        )
+    })
+})
+
+onBeforeUnmount(() => {
+    Echo.leave(`chapter.${props.chapter.id}`)
+})
+
+function sendSelection(editor) {
+    console.log('sendSelection')
+    const { from, to } = editor.state.selection
+
+    console.log({ from, to })
+
+    Echo.private(`chapter.${props.chapter.id}`)
+        .whisper('selection', {
+            userId: currentUser.value.id,
+            userName: currentUser.value.name,
+            role: currentUser.value.role,
+            from,
+            to,
+        })
+}
+
+onMounted(() => {
+    editor.value.on('selectionUpdate', () => {
+        sendSelection(editor.value)
+    })
+})
+
+watch(activeRemoteSelection, (selection) => {
+    if (!selection || !editor.value) {
+        return
+    }
+
+    const coords =
+        editor.value.view.coordsAtPos(
+            selection.from
+        )
+
+    remoteLabelPosition.value = {
+        top: coords.top - 32,
+        left: coords.left,
+        name: selection.userName,
+        role: selection.role,
+    }
+})
+
+let labelTimeout
+
+watch(activeRemoteSelection, (selection) => {
+    if (!selection || !editor.value) {
+        return
+    }
+
+    const coords =
+        editor.value.view.coordsAtPos(
+            selection.from
+        )
+
+    remoteLabelPosition.value = {
+        top: coords.top - 32,
+        left: coords.left,
+        name: selection.userName,
+        role: selection.role,
+    }
+
+    clearTimeout(labelTimeout)
+
+    labelTimeout = setTimeout(() => {
+        remoteLabelPosition.value = null
+    }, 3000)
+})
+
+document.addEventListener('selectionchange', () => {
+    const selection = window.getSelection()
+
+    if (!selection || selection.isCollapsed) {
+        channel.whisper('selection', {
+            userId: currentUser.value.id,
+            cleared: true,
+        })
+    }
+})
 </script>
 
 <template>
@@ -294,11 +404,22 @@ const deleteMessage = async (messageId) => {
             :order="chapter.order" :processing="form.processing" @save="save" />
 
         <div class="flex">
-            <ChapterSidebar :parts="project.parts"/>
+            <ChapterSidebar :parts="project.parts" :project-id="project.id" />
 
             <div class="flex-1 flex flex-col">
 
                 <ChapterToolbar :editor="editor" />
+
+                <div
+                    v-if="remoteLabelPosition"
+                    :class="['remote-reader-label', remoteLabelPosition.role]"
+                    :style="{
+                        top: `${remoteLabelPosition.top}px`,
+                        left: `${remoteLabelPosition.left}px`,
+                    }"
+                >
+                    {{ remoteLabelPosition.name }} is here 👀
+                </div>
 
                 <ChapterEditor :editor="editor" :chapter="chapter" :canEdit="canEdit"
                     :selectionHasComment="selectionHasComment" @comment="openCommentModal" />
@@ -336,5 +457,44 @@ const deleteMessage = async (messageId) => {
 .comment-highlight {
     background-color: rgba(250, 204, 21, 0.25);
     cursor: pointer;
+}
+
+.remote-selection {
+    border-radius: 3px;
+}
+
+/* Author selection */
+.remote-selection.role-author {
+    background: rgba(120, 180, 255, 0.35);
+}
+
+/* Reader selection */
+.remote-selection.role-reader {
+    background: rgba(255, 120, 180, 0.35);
+}
+
+.remote-reader-label {
+    position: fixed;
+
+    z-index: 9999;
+
+    background: rgb(189, 44, 87);
+    color: black;
+
+    padding: 4px 10px;
+
+    border-radius: 999px;
+
+    font-size: 12px;
+    font-weight: 600;
+
+    pointer-events: none;
+
+    box-shadow:
+        0 4px 12px rgba(0,0,0,.25);
+}
+
+.remote-reader-label.author {
+    background: rgba(120, 180, 255);
 }
 </style>

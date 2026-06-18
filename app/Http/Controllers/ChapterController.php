@@ -25,12 +25,12 @@ class ChapterController extends Controller
                 return [
                     'id' => $part->id,
                     'title' => $part->title,
-                    'chapters' => $part->chapters->map(function ($chapter) {
+                    'chapters' => $part->chapters->sortBy('order')->map(function ($chapter) {
                         return [
                             'id' => $chapter->id,
                             'title' => $chapter->title,
                         ];
-                    })->toArray()
+                    })->values()->toArray()
                 ];
             })->toArray()
         ];

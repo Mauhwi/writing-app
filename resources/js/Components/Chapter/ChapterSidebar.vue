@@ -1,6 +1,9 @@
 <script setup>
+import { Link } from '@inertiajs/vue3';
+
 const props = defineProps({
     parts: Array,
+    projectId: Number,
 })
 </script>
 
@@ -43,13 +46,15 @@ const props = defineProps({
                 </h3>
 
                 <div class="space-y-1">
+                    <Link  v-for="chapter in part.chapters"
+                    :key="chapter"
+                    :href="route('projects.chapters.show', { project: projectId, chapter: chapter.id })">
                     <button
-                        v-for="chapter in part.chapters"
-                        :key="chapter"
                         class="w-full text-left px-3 py-2 rounded-lg hover:bg-slate-800 transition-colors"
                     >
                         {{ chapter.title }}
                     </button>
+                    </Link>
                 </div>
             </div>
 
