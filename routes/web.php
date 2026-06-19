@@ -9,6 +9,7 @@ use App\Http\Controllers\ProjectController;
 use App\Http\Controllers\ChapterController;
 use App\Http\Controllers\CommentThreadController;
 use App\Http\Controllers\CommentMessageController;
+use App\Http\Controllers\CommentThreadReadController;
 
 Route::get('/', function () {
     return Inertia::render('Auth/Login', [
@@ -74,6 +75,14 @@ Route::middleware('auth')
 
         Route::delete('/comment-threads/{thread}', [CommentThreadController::class, 'destroy']
         )->name('comment-threads.destroy');
+
+        Route::post(
+            '/comment-threads/{thread}/read',
+            [CommentThreadReadController::class, 'store']
+        )->name('comment-threads.read');
+
+        Route::get('/comment-threads/{thread}', [CommentThreadController::class, 'show'])
+    ->name('comment-threads.show');
     });
 
 Route::middleware('auth')->group(function () {

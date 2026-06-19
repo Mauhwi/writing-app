@@ -4,6 +4,8 @@ import { ref } from 'vue';
 const props = defineProps({
     thread: Object,
     replyBody: String,
+    unreadCount: Number,
+    unreadThreadIds: Array,
 })
 
 defineEmits([
@@ -11,15 +13,23 @@ defineEmits([
     'reply',
     'delete-message',
     'delete-thread',
+    'go-to-next-unread',
 ])
 
 const showReply = ref(false)
+const unreadThreadIds = props.unreadThreadIds;
 </script>
 
 <template>
-    <aside class="w-96 border-l border-slate-800 overflow-y-auto">
+    <aside class="w-96 border-l border-slate-800 sticky top-[72px] h-[calc(100vh-72px)] overflow-y-auto">
         <div class="p-6">
-
+            <div
+                v-if="unreadCount > 0"
+                class="mb-3 cursor-pointer rounded-md border border-amber-300 bg-[#131a26] px-3 py-2 text-sm"
+                @click="$emit('go-to-next-unread')"
+            >
+                🔔 {{ unreadCount }} unread comments
+            </div>
             <div class="flex items-center justify-between mb-6">
                 <h2 class="font-semibold text-white">Comments</h2>
                 <div class="flex items-center gap-4">

@@ -42,6 +42,15 @@ class CommentThreadController extends Controller
         ]);
     }
 
+    public function show(CommentThread $thread)
+    {
+        $this->authorize('view', $thread->chapter->project);
+        
+        return response()->json(
+            $thread->load('messages.user')
+        );
+    }
+
     public function destroy(CommentThread $thread)
     {
         $anchor = $thread->anchor;

@@ -36,4 +36,9 @@ class CommentThread extends Model
     {
         return $this->hasMany(CommentMessage::class, 'thread_id');
     }
+
+    public function reads()
+    {
+        return $this->hasMany(CommentThreadRead::class, 'thread_id');
+    }
 }

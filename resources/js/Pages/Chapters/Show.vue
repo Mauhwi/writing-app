@@ -22,6 +22,8 @@ const props = defineProps({
     chapter: Object,
     canEdit: Boolean,
     commentThreads: Array,
+    unreadThreads: Number,
+    unreadThreadIds: Array,
 })
 
 const form = useForm({
@@ -301,6 +303,55 @@ const saveCommentMarks = () => {
         }
     )
 }
+
+//comment notifications
+watch(activeThread, async (thread) => {
+
+    if (!thread) {
+        return
+    }
+
+    await axios.post(
+        route('comment-threads.read', thread.id)
+    )
+
+    unreadIds.value =
+        unreadIds.value.filter(
+            id => id !== thread.id
+        )
+
+    unreadCount.value =
+        unreadIds.value.length
+})
+
+const unreadCount = ref(props.unreadThreads)
+
+const flashComment = (anchor) => {
+
+    const element =
+        editor.value.view.dom.querySelector(
+            `[data-comment-anchor="${anchor}"]`
+        )
+
+    if (!element) {
+        return
+    }
+
+    element.classList.add(
+        'comment-highlight-flash'
+    )
+
+    setTimeout(() => {
+        element.classList.remove(
+            'comment-highlight-flash'
+        )
+    }, 2000)
+}
+
+const unreadIds = ref([
+    ...props.unreadThreadIds,
+])
+
 //whispers
 const remoteSelections = ref({})
 const activeRemoteSelection = ref(null)
@@ -335,17 +386,36 @@ onMounted(() => {
     let isRefreshingContent = false
 
     channel.listen('.comment.message.created', async (e) => {
-        const thread = commentThreads.value.find(
-            t => t.id === e.thread_id
-        )
+        let thread = commentThreads.value.find(t => t.id === e.thread_id)
 
-        if (thread) {
+        // Thread doesn't exist locally yet (reader was on the page before it was created)
+        if (!thread) {
+            try {
+                const response = await axios.get(
+                    route('comment-threads.show', e.thread_id)
+                )
+                thread = response.data
+                commentThreads.value.push(thread)
+            } catch {
+                // fallback: thread fetch failed, skip
+                return
+            }
+        } else {
             const exists = thread.messages.some(m => m.id === e.message.id)
             if (!exists) {
                 thread.messages.push(e.message)
             }
         }
 
+        // Unread notification logic
+        if (e.message.user_id !== currentUser.value.id) {
+            if (!unreadIds.value.includes(e.thread_id)) {
+                unreadIds.value.unshift(e.thread_id)
+                unreadCount.value = unreadIds.value.length
+            }
+        }
+
+        // Content refresh (scroll-preserving)
         if (isRefreshingContent) return
         isRefreshingContent = true
 
@@ -359,20 +429,10 @@ onMounted(() => {
                     chapter: props.chapter.id,
                 })
             )
-
-            editor.value.commands.setContent(
-                response.data.content,
-                false
-            )
-
-            requestAnimationFrame(() => {
-                container.scrollTop = scrollTop
-            })
-
+            editor.value.commands.setContent(response.data.content, false)
+            requestAnimationFrame(() => { container.scrollTop = scrollTop })
         } finally {
-            setTimeout(() => {
-                isRefreshingContent = false
-            }, 200)
+            setTimeout(() => { isRefreshingContent = false }, 200)
         }
     })
 
@@ -486,6 +546,73 @@ document.addEventListener('selectionchange', () => {
         })
     }
 })
+
+const focusCommentAnchor = (anchor) => {
+
+    const doc = editor.value.state.doc
+
+    let foundPos = null
+
+    doc.descendants((node, pos) => {
+
+        const mark = node.marks?.find(
+            mark =>
+                mark.type.name === 'comment'
+                && mark.attrs.anchor === anchor
+        )
+
+        if (mark) {
+            foundPos = pos
+            return false
+        }
+
+        return true
+    })
+
+    if (!foundPos) {
+        return
+    }
+
+    editor.value
+        .chain()
+        .focus()
+        .setTextSelection(foundPos)
+        .run()
+
+    const coords =
+        editor.value.view.coordsAtPos(foundPos)
+
+    window.scrollTo({
+        top: coords.top - 200,
+        behavior: 'smooth',
+    })
+}
+
+const goToNextUnread = () => {
+
+    console.log(
+        commentThreads.value.map(t => t.id)
+    )
+    const threadId = unreadIds.value[0]
+
+    if (!threadId) {
+        return
+    }
+
+    const thread = commentThreads.value.find(
+        t => t.id === threadId
+    )
+
+    if (!thread) {
+        return
+    }
+
+    activeThread.value = thread
+
+    focusCommentAnchor(thread.anchor)
+
+    flashComment(thread.anchor)
+}
 </script>
 
 <template>
@@ -515,9 +642,8 @@ document.addEventListener('selectionchange', () => {
                     :selectionHasComment="selectionHasComment" @comment="openCommentModal" />
 
             </div>
-
-            <ChapterComments :thread="activeThread" :reply-body="replyBody" @update:reply-body="replyBody = $event"
-                @reply="submitReply" @delete-message="deleteMessage" @delete-thread="deleteThread" />
+            <ChapterComments :thread="activeThread" :unreadCount="unreadCount" :unreadThreadIds="unreadIds" :reply-body="replyBody" @update:reply-body="replyBody = $event"
+                @reply="submitReply" @delete-message="deleteMessage" ref="commentsRef" @delete-thread="deleteThread" @go-to-next-unread="goToNextUnread"/>
 
         </div>
     </div>
@@ -547,6 +673,20 @@ document.addEventListener('selectionchange', () => {
 .comment-highlight {
     background-color: rgba(250, 204, 21, 0.25);
     cursor: pointer;
+}
+
+@keyframes comment-ripple {
+    0% {
+        outline: 0px solid rgba(250,204,21,1);
+    }
+
+    100% {
+        outline: 12px solid rgba(250,204,21,0);
+    }
+}
+
+.comment-highlight-flash {
+    animation: comment-ripple 2s ease;
 }
 
 .remote-selection {

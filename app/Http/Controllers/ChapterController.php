@@ -17,7 +17,23 @@ class ChapterController extends Controller
         
         $chapter->load([
             'commentThreads.messages.user',
+            'commentThreads.messages',
+            'commentThreads.reads',
         ]);
+
+        $unreadThreadIds = $chapter->commentThreads
+            ->filter(function ($thread) {
+
+                $latestMessageId = $thread->messages->max('id');
+
+                $read = $thread->reads
+                    ->firstWhere('user_id', auth()->id());
+
+                return ! $read
+                    || $read->last_seen_message_id < $latestMessageId;
+            })
+            ->pluck('id')
+            ->values();
 
         $projectArray = [
             'id' => $project->id,
@@ -46,6 +62,8 @@ class ChapterController extends Controller
             'chapter' => $chapter,
             'canEdit' => $project->user_id === auth()->id(),
             'commentThreads' => $chapter->commentThreads,
+            'unreadThreadIds' => $unreadThreadIds,
+            'unreadThreads' => $unreadThreadIds->count(),
         ]);
     }
 
