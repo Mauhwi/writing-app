@@ -14,10 +14,9 @@ window.Pusher = Pusher
 window.Echo = new Echo({
     broadcaster: 'reverb',
     key: import.meta.env.VITE_REVERB_APP_KEY,
-
-    wsHost: '127.0.0.1',
-    wsPort: 8080,
-
-    forceTLS: false,
-    enabledTransports: ['ws'],
+    wsHost: import.meta.env.VITE_REVERB_HOST,
+    wsPort: import.meta.env.VITE_REVERB_PORT,
+    wssPort: import.meta.env.VITE_REVERB_PORT,
+    forceTLS: true,
+    enabledTransports: ['ws', 'wss'],
 })
