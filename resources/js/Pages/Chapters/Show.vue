@@ -628,6 +628,7 @@ const goToNextUnread = () => {
 }
 .comment-popover__textarea:focus {
     border-color: #4c5fa8;
+    --tw-ring-color: #5032bd;
 }
 .comment-popover__textarea::placeholder {
     color: #4a5568;
