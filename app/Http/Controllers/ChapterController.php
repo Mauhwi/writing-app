@@ -61,7 +61,19 @@ class ChapterController extends Controller
             'project' => $projectArray,
             'chapter' => $chapter,
             'canEdit' => $project->user_id === auth()->id(),
-            'commentThreads' => $chapter->commentThreads,
+            'commentThreads' => $chapter->commentThreads->map(function ($thread) {
+                $userId = auth()->id();
+                $firstMessageUserId = $thread->messages->first()?->user_id;
+                
+                return array_merge($thread->toArray(), [
+                    'canDeleteThread' => $firstMessageUserId === $userId,
+                    'messages' => $thread->messages->map(function ($message) use ($userId) {
+                        return array_merge($message->toArray(), [
+                            'canDelete' => $message->user_id === $userId,
+                        ]);
+                    })->toArray(),
+                ]);
+            }),
             'unreadThreadIds' => $unreadThreadIds,
             'unreadThreads' => $unreadThreadIds->count(),
         ]);

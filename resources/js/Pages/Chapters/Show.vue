@@ -214,7 +214,7 @@ const deleteThread = async () => {
     commentThreads.value = commentThreads.value.filter(thread => thread.id !== threadId)
 
     editor.value.chain().focus().unsetCommentByAnchor(anchor).run()
-    save()
+    saveCommentMarks()
     activeThread.value = null
 }
 
@@ -231,7 +231,7 @@ const deleteMessage = async (messageId) => {
         )
 
         editor.value.chain().focus().unsetCommentByAnchor(response.data.anchor).run()
-        save()
+        saveCommentMarks()
         activeThread.value = null
     }
 }

@@ -36,6 +36,14 @@ class CommentThreadController extends Controller
 
         event(new CommentMessageCreated($thread->id, $message));
 
+        $userId = auth()->id();
+        $firstMessageUserId = $thread->messages->first()?->user_id;
+
+        $thread->canDeleteThread = $firstMessageUserId === $userId;
+        $thread->messages->each(function ($message) use ($userId) {
+            $message->canDelete = $message->user_id === $userId;
+        });
+
         return response()->json([
             'anchor' => $thread->anchor,
             'thread' => $thread,
@@ -53,6 +61,12 @@ class CommentThreadController extends Controller
 
     public function destroy(CommentThread $thread)
     {
+        $firstMessage = $thread->messages()->oldest()->first();
+
+        if ($firstMessage?->user_id !== auth()->id()) {
+            abort(403);
+        }
+
         $anchor = $thread->anchor;
 
         $thread->delete();

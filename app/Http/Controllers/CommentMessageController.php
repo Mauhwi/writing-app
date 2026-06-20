@@ -32,6 +32,10 @@ class CommentMessageController extends Controller
 
     public function destroy(CommentMessage $message)
     {
+        if ($message->user_id !== auth()->id()) {
+            abort(403);
+        }
+
         $thread = $message->thread;
         $anchor = $thread->anchor;
 

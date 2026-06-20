@@ -39,13 +39,13 @@ const unreadThreadIds = props.unreadThreadIds
             <h2 class="font-semibold text-white text-sm tracking-wide">Comments</h2>
 
             <button
-                v-if="thread"
+                v-if="thread && thread.canDeleteThread"
                 @click="$emit('delete-thread')"
                 class="text-slate-500 hover:text-slate-300 transition-colors"
                 aria-label="Delete thread"
             >
                 <!-- Opossum trash icon — unchanged from original -->
-                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 50 50" width="36" height="36" fill="none"
+                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 50 50" width="50" height="50" fill="none"
                     stroke="currentColor" stroke-width="1" stroke-linecap="round" stroke-linejoin="round">
                     <path d="M 39 9.5 Q 39 11 40.5 11 Q 39 11 39 12.5 Q 39 11 37.5 11 Q 39 11 39 9.5 Z" stroke-width="0.5" fill="currentColor" />
                     <path d="M 42 13.5 Q 42 14.25 42.75 14.25 Q 42 14.25 42 15 Q 42 14.25 41.25 14.25 Q 42 14.25 42 13.5 Z" stroke-width="0.5" fill="currentColor" />
@@ -96,6 +96,7 @@ const unreadThreadIds = props.unreadThreadIds
                 <div class="flex justify-between items-start mb-2">
                     <div class="font-medium text-white text-sm">{{ message.user.name }}</div>
                     <button
+                        v-if="message.canDelete"
                         @click="$emit('delete-message', message.id)"
                         class="text-slate-600 hover:text-slate-400 transition-colors flex-shrink-0 ml-2"
                         aria-label="Delete comment"
