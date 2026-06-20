@@ -1,0 +1,34 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 32 32" width="32" height="32">
+  <!-- background -->
+  <rect width="32" height="32" rx="7" fill="#1e1b4b"/>
+
+  <!-- left cover -->
+  <path d="M 3 27 L 3 6 Q 3 4 5 4 L 15 4 L 15 28 L 5 28 Q 3 28 3 27 Z" fill="#4f46e5"/>
+  <!-- right cover -->
+  <path d="M 29 27 L 29 6 Q 29 4 27 4 L 17 4 L 17 28 L 27 28 Q 29 28 29 27 Z" fill="#4f46e5"/>
+  <!-- spine -->
+  <rect x="14.5" y="4" width="3" height="24" fill="#3730a3"/>
+
+  <!-- left page -->
+  <rect x="4" y="5" width="10" height="22" rx="1" fill="#f8fafc"/>
+  <!-- right page -->
+  <rect x="18" y="5" width="10" height="22" rx="1" fill="#f8fafc"/>
+
+  <!-- left page lines -->
+  <line x1="5.5" y1="9"  x2="12.5" y2="9"  stroke="#c7d2fe" stroke-width="1.2" stroke-linecap="round"/>
+  <line x1="5.5" y1="13" x2="12.5" y2="13" stroke="#c7d2fe" stroke-width="1.2" stroke-linecap="round"/>
+  <line x1="5.5" y1="17" x2="11"   y2="17" stroke="#c7d2fe" stroke-width="1.2" stroke-linecap="round"/>
+  <line x1="5.5" y1="21" x2="12.5" y2="21" stroke="#c7d2fe" stroke-width="1.2" stroke-linecap="round"/>
+
+  <!-- right page lines -->
+  <line x1="19.5" y1="9"  x2="26.5" y2="9"  stroke="#c7d2fe" stroke-width="1.2" stroke-linecap="round"/>
+  <line x1="19.5" y1="13" x2="26.5" y2="13" stroke="#c7d2fe" stroke-width="1.2" stroke-linecap="round"/>
+  <line x1="19.5" y1="17" x2="25"   y2="17" stroke="#c7d2fe" stroke-width="1.2" stroke-linecap="round"/>
+  <line x1="19.5" y1="21" x2="26.5" y2="21" stroke="#c7d2fe" stroke-width="1.2" stroke-linecap="round"/>
+
+  <!-- tiny quill -->
+  <path d="M 24 28 Q 29 21 31 14 Q 27 20 25 26 Z" fill="#fde68a"/>
+  <line x1="24" y1="28" x2="31" y2="14" stroke="#f59e0b" stroke-width="1.2" stroke-linecap="round"/>
+  <path d="M 24 28 L 22.5 31 L 25.5 30 Z" fill="#f59e0b"/>
+  <circle cx="23" cy="32" r="1.2" fill="#6366f1"/>
+</svg>
