@@ -8,6 +8,7 @@ const props = defineProps({
     updatedAt: String,
     order: Number,
     processing: Boolean,
+    canEdit: Boolean,
 })
 
 defineEmits(['save'])
@@ -53,6 +54,7 @@ const timeAgo = useTimeAgo(() => {
             </span>
 
             <button
+                v-if="canEdit"
                 class="px-4 py-2 rounded-lg bg-violet-600/40 hover:bg-violet-500/60"
                 @click="$emit('save')"
                 :disabled="processing"

@@ -618,7 +618,7 @@ const goToNextUnread = () => {
 <template>
     <div class="min-h-screen bg-[#0b0f17] text-zinc-100">
         <ChapterHeader :project="project" :chapter-title="chapter.title" :updated-at="chapter.updated_at"
-            :order="chapter.order" :processing="form.processing" @save="save" />
+            :order="chapter.order" :processing="form.processing" @save="save" :canEdit="canEdit"/>
 
         <div class="flex">
             <ChapterSidebar :parts="project.parts" :project-id="project.id" />
