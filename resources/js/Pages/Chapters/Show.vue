@@ -13,6 +13,7 @@ import ChapterSidebar from '@/Components/Chapter/ChapterSidebar.vue'
 import ChapterToolbar from '@/Components/Chapter/ChapterToolbar.vue'
 import ChapterEditor from '@/Components/Chapter/ChapterEditor.vue'
 import ChapterComments from '@/Components/Chapter/ChapterComments.vue'
+import Modal from '@/Components/Modal.vue'
 
 const props = defineProps({
     project: Object,
@@ -203,6 +204,34 @@ const submitReply = async () => {
 
     activeThread.value.messages.push(response.data)
     replyBody.value = ''
+}
+
+// ─── Delete confirmation ──────────────────────────────────────────────────
+
+const pendingDeletion = ref(null) // { type: 'thread' } | { type: 'message', id }
+
+const confirmDeleteThread = () => {
+    pendingDeletion.value = { type: 'thread' }
+}
+
+const confirmDeleteMessage = (messageId) => {
+    pendingDeletion.value = { type: 'message', id: messageId }
+}
+
+const cancelDeletion = () => {
+    pendingDeletion.value = null
+}
+
+const confirmDeletion = async () => {
+    if (!pendingDeletion.value) return
+
+    if (pendingDeletion.value.type === 'thread') {
+        await deleteThread()
+    } else if (pendingDeletion.value.type === 'message') {
+        await deleteMessage(pendingDeletion.value.id)
+    }
+
+    pendingDeletion.value = null
 }
 
 const deleteThread = async () => {
@@ -543,8 +572,8 @@ const goToNextUnread = () => {
                     :reply-body="replyBody"
                     @update:reply-body="replyBody = $event"
                     @reply="submitReply"
-                    @delete-message="deleteMessage"
-                    @delete-thread="deleteThread"
+                    @delete-message="confirmDeleteMessage"
+                    @delete-thread="confirmDeleteThread"
                     @go-to-next-unread="goToNextUnread"
                 />
             </div>
@@ -585,6 +614,26 @@ const goToNextUnread = () => {
             </div>
         </Transition>
     </Teleport>
+    
+    <!-- Delete confirmation modal -->
+<Modal :show="!!pendingDeletion" @close="cancelDeletion">
+    <h3 class="text-zinc-100 text-base font-semibold mb-2">
+        {{ pendingDeletion?.type === 'thread' ? 'Delete this thread?' : 'Delete this comment?' }}
+    </h3>
+    <p class="text-slate-400 mb-5">
+        {{ pendingDeletion?.type === 'thread'
+            ? 'This will permanently delete the thread and all its replies.'
+            : 'This comment will be permanently deleted.' }}
+    </p>
+    <div class="flex justify-end gap-2">
+        <button class="confirm-modal-btn confirm-modal-btn--cancel" @click="cancelDeletion">
+            Cancel
+        </button>
+        <button class="confirm-modal-btn confirm-modal-btn--danger" @click="confirmDeletion">
+            Delete
+        </button>
+    </div>
+</Modal>
 </template>
 
 <style>
@@ -737,5 +786,29 @@ const goToNextUnread = () => {
 .popover-leave-to {
     opacity: 0;
     transform: translateY(calc(-100% + 6px));
+}
+
+.confirm-modal-btn {
+    font-size: 13px;
+    padding: 6px 14px;
+    border-radius: 6px;
+    cursor: pointer;
+    border: none;
+    font-family: inherit;
+}
+.confirm-modal-btn--cancel {
+    background: transparent;
+    color: #94a3b8;
+    border: 1px solid #2a3a5c;
+}
+.confirm-modal-btn--cancel:hover {
+    background: #1e2a3e;
+}
+.confirm-modal-btn--danger {
+    background: #b91c1c;
+    color: white;
+}
+.confirm-modal-btn--danger:hover {
+    background: #dc2626;
 }
 </style>
