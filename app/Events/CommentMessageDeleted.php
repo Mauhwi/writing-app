@@ -16,13 +16,14 @@ class CommentMessageDeleted implements ShouldBroadcast
         public $threadId,
         public $messageId,
         public $threadDeleted,
+        public $chapterId,
         public $threadIdDeleted = null,
         public $anchor = null,
     ) {}
 
     public function broadcastOn()
     {
-        return new PrivateChannel('chapter.' . request()->chapter_id);
+        return new PrivateChannel('chapter.' . $this->chapterId);
     }
 
     public function broadcastAs()

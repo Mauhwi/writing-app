@@ -38,6 +38,7 @@ class CommentMessageController extends Controller
 
         $thread = $message->thread;
         $anchor = $thread->anchor;
+        $chapterId = $thread->chapter_id;
 
         $message->delete();
 
@@ -47,6 +48,7 @@ class CommentMessageController extends Controller
             $thread->id,
             $message->id,
             $threadDeleted,
+            $chapterId,
             $threadDeleted ? $thread->id : null,
             $threadDeleted ? $anchor : null,
         ));

@@ -6,6 +6,7 @@ const props = defineProps({
     replyBody: String,
     unreadCount: Number,
     unreadThreadIds: Array,
+    newMessageIds: { type: Array, default: () => [] },
 })
 
 defineEmits([
@@ -92,6 +93,7 @@ const unreadThreadIds = props.unreadThreadIds
                 v-for="message in thread.messages"
                 :key="message.id"
                 class="bg-slate-900 border border-slate-800 rounded-xl p-4"
+                :class="{ 'message-new': newMessageIds.includes(message.id) }"
             >
                 <div class="flex justify-between items-start mb-2">
                     <div class="font-medium text-white text-sm">{{ message.user.name }}</div>

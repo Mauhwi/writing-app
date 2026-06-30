@@ -75,8 +75,8 @@ class ProjectController extends Controller
             case 'create_part':
                 return $this->createPart($request, $project);
 
-            case 'rename_part':
-                return $this->renamePart($request, $project);
+            case 'update_part':
+                return $this->updatePart($request, $project);
 
             case 'delete_part':
                 return $this->deletePart($request, $project);
@@ -114,11 +114,12 @@ class ProjectController extends Controller
         return back();
     }
 
-    private function renamePart(Request $request, Project $project)
+    private function updatePart(Request $request, Project $project)
     {
         $validated = $request->validate([
             'part_id' => ['required', 'integer'],
             'title' => ['required', 'string', 'max:255'],
+            'summary' => ['nullable', 'string'],
         ]);
 
         $part = $project->parts()
@@ -127,6 +128,7 @@ class ProjectController extends Controller
 
         $part->update([
             'title' => $validated['title'],
+            'summary' => $validated['summary'],
         ]);
 
         return back();

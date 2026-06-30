@@ -8,6 +8,7 @@ use App\Models\Chapter;
 use App\Models\CommentThread;
 use App\Events\CommentMessageCreated;
 use App\Events\CommentMessageDeleted;
+use App\Events\CommentThreadDeleted;
 
 class CommentThreadController extends Controller
 {
@@ -68,8 +69,11 @@ class CommentThreadController extends Controller
         }
 
         $anchor = $thread->anchor;
+        $chapterId = $thread->chapter_id;
 
         $thread->delete();
+
+        event(new CommentThreadDeleted($thread->id, $chapterId, $anchor));
 
         return response()->json([
             'anchor' => $anchor,

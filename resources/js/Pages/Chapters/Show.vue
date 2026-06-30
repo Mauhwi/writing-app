@@ -109,6 +109,7 @@ const pendingSelection = ref(null)
 const activeThread = ref(null)
 const replyBody = ref('')
 const commentThreads = ref([...props.commentThreads])
+const newMessageIds = ref([])
 
 // Popover state
 const showCommentPopover = ref(false)
@@ -299,7 +300,7 @@ onMounted(() => {
     channel.listen('.comment.message.created', async (e) => {
         let thread = commentThreads.value.find(t => t.id === e.thread_id)
 
-        // Thread doesn't exist locally yet (reader was on page before it was created)
+        // If the thread doesn't exist in the local state, fetch it from the server and add it to the list
         if (!thread) {
             try {
                 const response = await axios.get(route('comment-threads.show', e.thread_id))
@@ -314,7 +315,24 @@ onMounted(() => {
         }
 
         if (e.message.user_id !== currentUser.value.id) {
-            if (!unreadIds.value.includes(e.thread_id)) {
+            newMessageIds.value.push(e.message.id)
+            setTimeout(() => {
+                newMessageIds.value = newMessageIds.value.filter(id => id !== e.message.id)
+            }, 4000)
+
+            if (activeThread.value?.id === e.thread_id) {
+                await axios.post(route('comment-threads.read', e.thread_id))
+            } else if (!unreadIds.value.includes(e.thread_id)) {
+                unreadIds.value.unshift(e.thread_id)
+                unreadCount.value = unreadIds.value.length
+            }
+        }
+
+        // If the message is from another user, mark the thread as unread if it's not the active thread
+        if (e.message.user_id !== currentUser.value.id) {
+            if (activeThread.value?.id === e.thread_id) {
+                await axios.post(route('comment-threads.read', e.thread_id))
+            } else if (!unreadIds.value.includes(e.thread_id)) {
                 unreadIds.value.unshift(e.thread_id)
                 unreadCount.value = unreadIds.value.length
             }
@@ -326,6 +344,7 @@ onMounted(() => {
         const container = editor.value.view.dom.parentElement
         const scrollTop = container.scrollTop
 
+        // Refresh the editor content from the server to ensure that the new comment mark is rendered correctly
         try {
             const response = await axios.get(
                 route('projects.chapters.content', {
@@ -341,19 +360,32 @@ onMounted(() => {
     })
 
     channel.listen('.comment.message.deleted', (e) => {
+        console.log('Received comment.message.deleted event', e)
         if (e.threadDeleted) {
             commentThreads.value = commentThreads.value.filter(t => t.id !== e.threadIdDeleted)
+            editor.value.chain().unsetCommentByAnchor(e.anchor).run()
             if (activeThread.value?.id === e.threadIdDeleted) activeThread.value = null
             return
         }
 
         const thread = commentThreads.value.find(t => t.id === e.threadId)
         if (thread) thread.messages = thread.messages.filter(m => m.id !== e.messageId)
+        
+    })
+
+    channel.listen('.comment.thread.deleted', (e) => {
+        commentThreads.value = commentThreads.value.filter(t => t.id !== e.threadId)
+
+        if (activeThread.value?.id === e.threadId) {
+            activeThread.value = null
+        }
+
+        editor.value.chain().unsetCommentByAnchor(e.anchor).run()
     })
 
     let isRefreshing = false
 
-    channel.listen('.chapter.content.updated', async () => {
+    channel.listen('.chapter.content.updated', async () => { 
         if (!editor.value || isRefreshing) return
         isRefreshing = true
 
@@ -507,6 +539,7 @@ const goToNextUnread = () => {
                     :thread="activeThread"
                     :unreadCount="unreadCount"
                     :unreadThreadIds="unreadIds"
+                    :new-message-ids="newMessageIds"
                     :reply-body="replyBody"
                     @update:reply-body="replyBody = $event"
                     @reply="submitReply"
@@ -566,8 +599,24 @@ const goToNextUnread = () => {
     100% { outline: 12px solid rgba(250, 204, 21, 0); }
 }
 
+@keyframes message-glow {
+    0%, 100% {
+        background-color: rgba(139, 92, 246, 0.22);
+    }
+    50% {
+        background-color: rgba(139, 92, 246, 0.08);
+    }
+}
+
 .comment-highlight-flash {
     animation: comment-ripple 2s ease;
+}
+
+.message-new {
+    border-color: rgba(139, 92, 246, 0.5);
+    animation:
+        message-ripple 1.2s ease-out,
+        message-glow 2s ease-in-out 2;
 }
 
 /* ── Remote selection decorations ──────────────────────────────────────────── */

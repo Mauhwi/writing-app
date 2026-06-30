@@ -23,14 +23,17 @@ class ChapterController extends Controller
 
         $unreadThreadIds = $chapter->commentThreads
             ->filter(function ($thread) {
+                $latestMessage = $thread->messages->sortBy('id')->last();
 
-                $latestMessageId = $thread->messages->max('id');
+                if (! $latestMessage || $latestMessage->user_id === auth()->id()) {
+                    return false;
+                }
 
                 $read = $thread->reads
                     ->firstWhere('user_id', auth()->id());
 
                 return ! $read
-                    || $read->last_seen_message_id < $latestMessageId;
+                    || $read->last_seen_message_id < $latestMessage->id;
             })
             ->pluck('id')
             ->values();
