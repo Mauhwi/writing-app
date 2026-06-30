@@ -51,59 +51,175 @@ const undoDelete = () => {
 </script>
 
 <template>
-  <div class="container">
-    <h2 class="text-2xl font-semibold mb-4">Projects</h2>
-    <div v-if="page.props.flash.success" class="toast">{{ page.props.flash.success }}</div>
-    <div v-if="recentlyDeleted">
-      Project deleted.
+    <div class="w-full min-h-screen bg-[#0d0f17] p-8">
 
-      <button @click="undoDelete">
-        Undo
-      </button>
-    </div>
-    <div class="grid grid-cols-2 gap-4 mb-5">
-      <div v-for="project in projects" :key="project.id" class="p-4 bg-white shadow rounded">
-        <div class="project-header d-flex p-2 flex-row justify-content-between">
-          <h3 class="font-bold">
+        <!-- Header -->
+        <header class="mb-7 flex items-center justify-between">
+            <div>
+                <p class="mb-1 text-sm text-zinc-500">
+                    Your library
+                </p>
+
+                <h1 class="text-2xl font-medium text-zinc-100">
+                    Projects
+                </h1>
+            </div>
+
+            <div class="flex items-center gap-3">
+                <button
+                    class="flex items-center gap-2 rounded-lg bg-[#534AB7] px-4 py-2 text-sm font-medium text-[#EEEDFE] transition hover:bg-[#6257cf]"
+                >
+                    <i class="ti ti-plus"></i>
+
+                    <span>New project</span>
+                </button>
+
+            </div>
+        </header>
+
+        <!-- Projects -->
+        <section
+            class="grid grid-cols-[repeat(auto-fit,minmax(280px,1fr))] gap-4"
+        >
+
+            <!-- Project -->
+            <article v-for="project in projects" :key="project.id"
+                class="overflow-hidden rounded-xl border border-[#2a2d3a] bg-[#171a26]"
+            >
             <Link :href="route('projects.show', { project: project.id })">
-            {{ project.title }}
-          </Link>
-          </h3>
-            <button @click="deleteProject(project.id)">
-              x
+                <div
+                    class="flex h-20 items-center justify-center border-b border-[#2a2d3a] bg-gradient-to-br from-[#2a2550] to-[#1a1830]"
+                >
+                    <i class="ti ti-book text-3xl text-[#7F77DD]"></i>
+                </div>
+                </Link>
+
+                <div class="p-4">
+
+                    <div class="mb-2 flex items-start justify-between">
+                        <h2 class="text-base font-medium text-zinc-100">
+                          <Link :href="route('projects.show', { project: project.id })">
+                            {{ project.title }}
+                          </Link>
+                        </h2>
+
+                        <button>
+                            <i class="ti ti-dots text-zinc-500"></i>
+                        </button>
+                    </div>
+
+                    <p class="mb-4 text-sm leading-relaxed text-zinc-400">
+                        {{ project.description }}
+                    </p>
+
+                    <footer
+                        class="flex items-center justify-between border-t border-[#232633] pt-3 text-xs text-zinc-500"
+                    >
+                        <span class="flex items-center gap-1">
+                            <i class="ti ti-file-text"></i>
+                            many chapters
+                        </span>
+
+                        <span>much words</span>
+                    </footer>
+
+                </div>
+            </article>
+
+            <!-- Project -->
+            <article
+                class="overflow-hidden rounded-xl border border-[#2a2d3a] bg-[#171a26]"
+            >
+                <div
+                    class="flex h-20 items-center justify-center border-b border-[#2a2d3a] bg-gradient-to-br from-[#2a1d22] to-[#1f1419]"
+                >
+                    <i class="ti ti-feather text-3xl text-[#D4537E]"></i>
+                </div>
+
+                <div class="p-4">
+
+                    <div class="mb-2 flex items-start justify-between">
+                        <h2 class="text-base font-medium text-zinc-100">
+                            Articles of Faith
+                        </h2>
+
+                        <button>
+                            <i class="ti ti-dots text-zinc-500"></i>
+                        </button>
+                    </div>
+
+                    <p class="mb-4 text-sm leading-relaxed text-zinc-400">
+                        
+                    </p>
+
+                    <footer
+                        class="flex items-center justify-between border-t border-[#232633] pt-3 text-xs text-zinc-500"
+                    >
+                        <span class="flex items-center gap-1">
+                            <i class="ti ti-file-text"></i>
+                            many chapters
+                        </span>
+
+                        <span>much words</span>
+                    </footer>
+
+                </div>
+            </article>
+
+                        <!-- Project -->
+            <article
+                class="overflow-hidden rounded-xl border border-[#2a2d3a] bg-[#171a26]"
+            >
+                <div
+                    class="flex h-20 items-center justify-center border-b border-[#2a2d3a] bg-gradient-to-br from-[#2a1d22] to-[#1f1419]"
+                >
+                    <i class="ti ti-feather text-3xl text-[#D4537E]"></i>
+                </div>
+
+                <div class="p-4">
+
+                    <div class="mb-2 flex items-start justify-between">
+                        <h2 class="text-base font-medium text-zinc-100">
+                            The Instruments of Hell
+                        </h2>
+
+                        <button>
+                            <i class="ti ti-dots text-zinc-500"></i>
+                        </button>
+                    </div>
+
+                    <p class="mb-4 text-sm leading-relaxed text-zinc-400">
+                        
+                    </p>
+
+                    <footer
+                        class="flex items-center justify-between border-t border-[#232633] pt-3 text-xs text-zinc-500"
+                    >
+                        <span class="flex items-center gap-1">
+                            <i class="ti ti-file-text"></i>
+                            many chapters
+                        </span>
+
+                        <span>much words</span>
+                    </footer>
+
+                </div>
+            </article>
+
+            <!-- New Project -->
+            <button
+                class="flex flex-col items-center justify-center gap-2 rounded-xl border border-dashed border-[#2e3140] p-8 text-zinc-500 transition hover:border-[#534AB7] hover:text-zinc-300"
+            >
+                <i class="ti ti-plus text-2xl"></i>
+
+                <span class="text-sm">
+                    Start your next project
+                </span>
             </button>
-        </div>
-        <p class="text-sm text-gray-600">{{ project.description }}</p>
 
-        <div class="mt-2 text-sm">
-          {{ project.chapters.length }} chapters
-        </div>
-      </div>
+        </section>
+
     </div>
-  </div>
 
-  <div class="container">
-  <div class="row justify-content-center">
-    <div class="col-4">
-      <form @submit.prevent="submit">
-        <div class="form-group mb-3">
-          <input v-model="form.title" type="text" placeholder="Project Name" class="form-control" id="projectName"/>
-          <div v-if="form.errors.title">{{ form.errors.title }}</div>
-        </div>
-        <div class="form-group mb-3">
-          <textarea v-model="form.description" placeholder="Description" class="form-control" id="projectDescription"></textarea>
-        </div>
-
-        <button @click="createProject" :disabled="form.processing" class="px-4 py-2 bg-blue-500 text-white rounded">
-          {{ form.processing ? 'Creating...' : 'Create New Project' }}
-        </button>
-
-        <!-- Display Errors -->
-        <div v-if="form.errors.title" class="text-red-500">
-          {{ form.errors.title }}
-        </div>
-      </form>
-    </div>
-  </div>
-  </div>
+    
 </template>
