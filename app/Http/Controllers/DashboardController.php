@@ -14,8 +14,18 @@ class DashboardController extends Controller
             ->with('chapters')
             ->get();
 
+        $sharedProjects = auth()->user()
+            ->sharedProjects()
+            ->with('chapters')
+            ->get();
+
+        foreach ($projects as $project) {
+            $project->word_count = $project->chapters->sum('word_count');
+        }
+
         return inertia('Dashboard', [
-            'projects' => $projects
+            'projects' => $projects,
+            'sharedProjects' => $sharedProjects
         ]);
     }
 }
