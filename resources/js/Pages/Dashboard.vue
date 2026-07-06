@@ -20,7 +20,8 @@ const createProject = () => {
 
 const props = defineProps({
   projects: Array,
-  sharedProjects: Array
+  sharedProjects: Array,
+  canEdit: Boolean
 });
 
 const projectsLocal = ref([...props.projects]);
@@ -67,7 +68,7 @@ const undoDelete = () => {
             </div>
 
             <div class="flex items-center gap-3">
-                <button
+                <button v-if="canEdit"
                     class="flex items-center gap-2 rounded-lg bg-[#534AB7] px-4 py-2 text-sm font-medium text-[#EEEDFE] transition hover:bg-[#6257cf]"
                 >
                     <i class="ti ti-plus"></i>
@@ -142,24 +143,38 @@ const undoDelete = () => {
             </article>
 
             <!-- Shared Project -->
-            <article v-for="project in sharedProjects" :key="project.id"
+            <article
+                v-for="project in sharedProjects"
+                :key="project.id"
                 class="overflow-hidden rounded-xl border border-[#2a2d3a] bg-[#171a26]"
             >
-            <Link :href="route('projects.show', { project: project.id })">
-                <div
-                    class="flex h-20 items-center justify-center border-b border-[#2a2d3a] bg-gradient-to-br from-[#2a2550] to-[#1a1830]"
-                >
-                    <i class="ti ti-book text-3xl text-[#7F77DD]"></i>
-                </div>
+                <Link :href="route('projects.show', { project: project.id })">
+                    <div class="h-80 overflow-hidden border-b border-[#2a2d3a]">
+
+                        <img
+                            v-if="project.cover_image"
+                            :src="`/storage/${project.cover_image}`"
+                            :alt="`${project.title} cover`"
+                            class="h-full w-full object-cover object-[center_10%]"
+                        />
+
+                        <div
+                            v-else
+                            class="flex h-full items-center justify-center bg-gradient-to-br from-[#2a2550] to-[#1a1830]"
+                        >
+                            <i class="ti ti-book text-3xl text-[#7F77DD]"></i>
+                        </div>
+
+                    </div>
                 </Link>
 
                 <div class="p-4">
 
                     <div class="mb-2 flex items-start justify-between">
                         <h2 class="text-base font-medium text-zinc-100">
-                          <Link :href="route('projects.show', { project: project.id })">
-                            {{ project.title }}
-                          </Link>
+                            <Link :href="route('projects.show', { project: project.id })">
+                                {{ project.title }}
+                            </Link>
                         </h2>
 
                         <button>
@@ -176,10 +191,10 @@ const undoDelete = () => {
                     >
                         <span class="flex items-center gap-1">
                             <i class="ti ti-file-text"></i>
-                            many chapters
+                            {{ project.chapters.length }} chapters
                         </span>
 
-                        <span>much words</span>
+                        <span>{{ project.word_count }} words</span>
                     </footer>
 
                 </div>
@@ -266,7 +281,7 @@ const undoDelete = () => {
             </article>
 
             <!-- New Project -->
-            <button
+            <button v-if="canEdit"
                 class="flex flex-col items-center justify-center gap-2 rounded-xl border border-dashed border-[#2e3140] p-8 text-zinc-500 transition hover:border-[#534AB7] hover:text-zinc-300"
             >
                 <i class="ti ti-plus text-2xl"></i>

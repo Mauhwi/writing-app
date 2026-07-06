@@ -23,9 +23,20 @@ class DashboardController extends Controller
             $project->word_count = $project->chapters->sum('word_count');
         }
 
+        foreach ($sharedProjects as $sharedProject) {
+            $sharedProject->word_count = $sharedProject->chapters->sum('word_count');
+        }
+
+        $canEdit = false;
+        if (auth()->user()->role === 'author') 
+        {
+            $canEdit = true;
+        }
+
         return inertia('Dashboard', [
             'projects' => $projects,
-            'sharedProjects' => $sharedProjects
+            'sharedProjects' => $sharedProjects,
+            'canEdit' => $canEdit
         ]);
     }
 }

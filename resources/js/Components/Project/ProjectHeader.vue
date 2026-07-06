@@ -162,7 +162,7 @@ const submit = () => {
             <div class="space-y-4 flex-1 min-w-0">
                 <!-- Breadcrumbs with chevron arrow -->
                 <div class="flex items-center gap-2 text-sm text-zinc-500">
-                    <span>Projects</span>
+                    <a href="/"><span>Projects</span></a>
                     <svg class="w-3 h-3" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7" />
                     </svg>
