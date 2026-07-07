@@ -127,9 +127,7 @@
             <span>{{ chapter.updated_at_human }}</span>
         </div>
 
-    </article>
-
-    <Modal v-if="canEdit" :show="isEditModalOpen">
+            <Modal v-if="canEdit" :show="isEditModalOpen">
 
         <h3 class="text-lg font-bold mb-4">
             Edit Chapter
@@ -193,4 +191,5 @@
         </form>
 
     </Modal>
+    </article>
 </template>

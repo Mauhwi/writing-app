@@ -1,6 +1,6 @@
 <script setup>
 import draggable from 'vuedraggable'
-import { ref, onMounted, onBeforeUnmount } from 'vue'
+import { ref, onMounted, onBeforeUnmount, computed } from 'vue'
 import { useForm } from '@inertiajs/vue3'
 import Modal from '@/Components/Modal.vue'
 
@@ -10,7 +10,8 @@ const props = defineProps({
     project: Object,
     part: Object,
     cardSize: String,
-    canEdit: Boolean
+    canEdit: Boolean,
+    chapters: Array
 })
 
 const activeMenu = ref(null)
@@ -43,6 +44,14 @@ const submitPart = () => {
         },
     })
 }
+
+const emit = defineEmits(['update:chapters', 'reordered'])
+
+const localChapters = computed({
+    get: () => props.chapters,
+    set: (val) => emit('update:chapters', val)
+})
+console.log('localChapters', localChapters.value)
 </script>
 
 <template>
@@ -73,19 +82,18 @@ const submitPart = () => {
 
         </div>
 
-        <template v-if="part.chapters.length">
-            <draggable
-                :list="part.chapters"
-                item-key="id"
-                group="chapters"
-                class="chapter-grid"
-                ghost-class="drag-ghost"
-                chosen-class="drag-chosen"
-                animation="250"
-                handle=".drag-handle"
-            >
-                <template #item="{ element }">
-                    
+        <draggable
+            v-model="localChapters"
+            item-key="id"
+            group="chapters"
+            class="chapter-grid"
+            ghost-class="drag-ghost"
+            chosen-class="drag-chosen"
+            animation="250"
+            handle=".drag-handle"
+            @change="emit('reordered')"
+        >
+            <template #item="{ element }">
                 <ChapterCard
                     :project="project"
                     :chapter="element"
@@ -97,22 +105,22 @@ const submitPart = () => {
                             ? null
                             : element.id"
                 />
-                </template>
-            </draggable>
-        </template>
+            </template>
 
-        <div v-else
-            class="rounded-xl border border-dashed border-zinc-700/70 bg-zinc-900/30 px-8 py-12 text-center">
-            <div class="space-y-3">
-                <p class="text-lg text-zinc-300">
-                    This part is empty
-                </p>
-
-                <p class="max-w-md mx-auto text-sm text-zinc-500">
-                    Add chapters here to begin drafting this section.
-                </p>
-            </div>
-        </div>
+            <template #footer>
+                <div
+                    v-if="!localChapters.length"
+                    class="empty-part-placeholder rounded-xl border border-dashed border-zinc-700/70 bg-zinc-900/30 px-8 py-12 text-center col-span-full"
+                >
+                    <div class="space-y-3">
+                        <p class="text-lg text-zinc-300">This part is empty</p>
+                        <p class="max-w-md mx-auto text-sm text-zinc-500">
+                            Add chapters here to begin drafting this section.
+                        </p>
+                    </div>
+                </div>
+            </template>
+        </draggable>
 
     </section>
 

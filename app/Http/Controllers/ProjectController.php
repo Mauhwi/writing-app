@@ -81,6 +81,9 @@ class ProjectController extends Controller
             case 'delete_part':
                 return $this->deletePart($request, $project);
 
+            case 'reorder_chapters':
+                return $this->reorderChapters($request, $project);
+
             default:
                 abort(400, 'Unknown action.');
         }
@@ -199,6 +202,30 @@ class ProjectController extends Controller
 
         $project->readers()
             ->syncWithoutDetaching([$reader->id]);
+
+        return back();
+    }
+
+    public function reorderChapters(Request $request, Project $project)
+    {
+        $this->authorize('update', $project);
+
+        $validated = $request->validate([
+            'chapters' => ['required', 'array'],
+            'chapters.*.id' => ['required', 'integer'],
+            'chapters.*.part_id' => ['nullable', 'integer'],
+            'chapters.*.order' => ['nullable', 'integer'],
+        ]);
+
+        foreach ($validated['chapters'] as $chapterData) {
+            $chapter = $project->chapters()->find($chapterData['id']);
+            if ($chapter) {
+                $chapter->update([
+                    'part_id' => $chapterData['part_id'],
+                    'order' => $chapterData['order']+1,
+                ]);
+            }
+        }
 
         return back();
     }
