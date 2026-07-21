@@ -59,7 +59,8 @@
     >
 
         <div class="flex items-center justify-between w-full">
-            <button class="drag-handle text-zinc-500 hover:text-zinc-300 cursor-grab">⋮⋮</button>
+            <button v-if="canEdit" class="drag-handle text-zinc-500 hover:text-zinc-300 cursor-grab">⋮⋮</button>
+            <button v-else class="text-zinc-500 hover:text-zinc-300 cursor-grab"></button>
             <div class="chapter-number">
                 {{ chapter.order}}
             </div>
