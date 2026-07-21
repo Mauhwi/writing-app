@@ -116,6 +116,7 @@ const unreadThreadIds = props.unreadThreadIds
                 <textarea
                     :value="replyBody"
                     @input="$emit('update:reply-body', $event.target.value)"
+                    @keydown.ctrl.enter.prevent="$emit('reply')"
                     rows="3"
                     class="comment-textarea w-full bg-transparent text-slate-300 text-sm resize-none outline-none placeholder-slate-600"
                     placeholder="Reply…"

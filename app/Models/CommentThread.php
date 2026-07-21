@@ -4,9 +4,12 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Str;
+use Illuminate\Database\Eloquent\Factories\HasFactory;
 
 class CommentThread extends Model
 {
+    use HasFactory;
+    
     protected $fillable = [
         'chapter_id',
         'created_by',
