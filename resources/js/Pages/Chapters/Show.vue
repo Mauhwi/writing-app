@@ -616,28 +616,27 @@ const goToNextUnread = () => {
     </Teleport>
     
     <!-- Delete confirmation modal -->
-<Modal :show="!!pendingDeletion" @close="cancelDeletion">
-    <h3 class="text-zinc-100 text-base font-semibold mb-2">
-        {{ pendingDeletion?.type === 'thread' ? 'Delete this thread?' : 'Delete this comment?' }}
-    </h3>
-    <p class="text-slate-400 mb-5">
-        {{ pendingDeletion?.type === 'thread'
-            ? 'This will permanently delete the thread and all its replies.'
-            : 'This comment will be permanently deleted.' }}
-    </p>
-    <div class="flex justify-end gap-2">
-        <button class="confirm-modal-btn confirm-modal-btn--cancel" @click="cancelDeletion">
-            Cancel
-        </button>
-        <button class="confirm-modal-btn confirm-modal-btn--danger" @click="confirmDeletion">
-            Delete
-        </button>
-    </div>
-</Modal>
+    <Modal :show="!!pendingDeletion" @close="cancelDeletion">
+        <h3 class="text-zinc-100 text-base font-semibold mb-2">
+            {{ pendingDeletion?.type === 'thread' ? 'Delete this thread?' : 'Delete this comment?' }}
+        </h3>
+        <p class="text-slate-400 mb-5">
+            {{ pendingDeletion?.type === 'thread'
+                ? 'This will permanently delete the thread and all its replies.'
+                : 'This comment will be permanently deleted.' }}
+        </p>
+        <div class="flex justify-end gap-2">
+            <button class="confirm-modal-btn confirm-modal-btn--cancel" @click="cancelDeletion">
+                Cancel
+            </button>
+            <button class="confirm-modal-btn confirm-modal-btn--danger" @click="confirmDeletion">
+                Delete
+            </button>
+        </div>
+    </Modal>
 </template>
 
 <style>
-/* ── Comment highlight in editor ───────────────────────────────────────────── */
 .comment-highlight {
     background-color: rgba(21, 204, 250, 0.2);
     cursor: pointer;
@@ -668,7 +667,6 @@ const goToNextUnread = () => {
         message-glow 2s ease-in-out 2;
 }
 
-/* ── Remote selection decorations ──────────────────────────────────────────── */
 .remote-selection {
     border-radius: 3px;
 }
@@ -695,11 +693,9 @@ const goToNextUnread = () => {
     background: rgba(120, 180, 255);
 }
 
-/* ── Comment popover ───────────────────────────────────────────────────────── */
 .comment-popover {
     position: fixed;
     z-index: 1000;
-    /* Shift up so the bottom of the popover sits at the top of the selection */
     transform: translateY(-100%);
     margin-top: -6px;
 

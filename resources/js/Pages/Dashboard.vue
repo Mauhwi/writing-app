@@ -96,178 +96,190 @@ function hashString(str) {
             </div>
         </header>
 
-        <!-- Projects -->
-        <section
-            class="grid grid-cols-[repeat(auto-fit,minmax(280px,1fr))] gap-4"
-        >
-            <article
-            v-for="project in projectsLocal"
-            :key="project.id"
-            class="group relative overflow-hidden rounded-xl border border-[#2a2d3a] bg-[#171a26] transition"
-            :class="pendingIds.has(project.id) ? 'opacity-40 saturate-0 pointer-events-none' : ''"
-            >
-            <Link :href="route('projects.show', { project: project.id })">
-                <div class="h-80 overflow-hidden border-b border-[#2a2d3a]">
-                <img
-                    v-if="project.cover_image"
-                    :src="`/storage/${project.cover_image}`"
-                    :alt="`${project.title} cover`"
-                    class="h-full w-full object-cover object-[center_10%]"
-                />
-                <div
-                v-else
-                class="flex h-full items-center justify-center"
-                :style="{
-                    background: `linear-gradient(to bottom right, ${paletteFor(project).from}, ${paletteFor(project).to})`
-                }"
-                >
-                <i
-                    class="ti text-3xl"
-                    :class="paletteFor(project).iconClass"
-                    :style="{ color: paletteFor(project).icon }"
-                ></i>
-                </div>
-                </div>
-            </Link>
-
+        <!-- My Projects -->
+        <section class="mb-8">
+            <h2 class="mb-4 text-lg font-medium text-zinc-100">My Projects</h2>
+            
             <div
-                v-if="canEdit"
-                class="absolute right-3 top-3 opacity-0 transition-opacity group-hover:opacity-100"
-                :class="{ '!opacity-100': openMenuId === project.id }"
+                class="grid grid-cols-[repeat(auto-fit,minmax(280px,1fr))] gap-4"
             >
-                <button
-                @click.stop="openMenuId = openMenuId === project.id ? null : project.id"
-                class="flex h-8 w-8 items-center justify-center rounded-full bg-black/50 text-zinc-200 backdrop-blur hover:bg-black/70"
+                <!-- User's Own Projects -->
+                <article
+                    v-for="project in projectsLocal"
+                    :key="project.id"
+                    class="group relative overflow-hidden rounded-xl border border-[#2a2d3a] bg-[#171a26] transition"
+                    :class="pendingIds.has(project.id) ? 'opacity-40 saturate-0 pointer-events-none' : ''"
                 >
-                ⋮
-                </button>
+                    <Link :href="route('projects.show', { project: project.id })">
+                        <div class="h-80 overflow-hidden border-b border-[#2a2d3a]">
+                            <img
+                                v-if="project.cover_image"
+                                :src="`/storage/${project.cover_image}`"
+                                :alt="`${project.title} cover`"
+                                class="h-full w-full object-cover object-[center_10%]"
+                            />
+                            <div
+                                v-else
+                                class="flex h-full items-center justify-center"
+                                :style="{
+                                    background: `linear-gradient(to bottom right, ${paletteFor(project).from}, ${paletteFor(project).to})`
+                                }"
+                            >
+                                <i
+                                    class="ti text-3xl"
+                                    :class="paletteFor(project).iconClass"
+                                    :style="{ color: paletteFor(project).icon }"
+                                ></i>
+                            </div>
+                        </div>
+                    </Link>
 
-                <div
-                v-if="openMenuId === project.id"
-                class="absolute right-0 mt-1 w-36 overflow-hidden rounded-lg border border-[#2a2d3a] bg-[#1c1f2b] shadow-lg"
-                >
-                <button
-                    @click.stop="deleteProject(project)"
-                    class="flex w-full items-center gap-2 px-3 py-2 text-left text-sm text-red-400 hover:bg-red-500/10"
-                >
-                    <i class="ti ti-trash"></i> Delete
-                </button>
-                </div>
-            </div>
-
-            <div class="p-4">
-                <div class="mb-2 flex items-start justify-between">
-                <h2 class="text-base font-medium text-zinc-100">
-                    <Link :href="route('projects.show', { project: project.id })">{{ project.title }}</Link>
-                </h2>
-                </div>
-
-                <p class="mb-4 text-sm leading-relaxed text-zinc-400">{{ project.description }}</p>
-
-                <footer
-                v-if="!pendingIds.has(project.id)"
-                class="flex items-center justify-between border-t border-[#232633] pt-3 text-xs text-zinc-500"
-                >
-                <span class="flex items-center gap-1">
-                    <i class="ti ti-file-text"></i> {{ project.chapters.length }} chapters
-                </span>
-                <span>{{ project.word_count }} words</span>
-                </footer>
-
-                <!-- Deletion overlay -->
-                <div
-                    v-if="pendingIds.has(project.id)"
-                    class="pointer-events-auto absolute inset-0 z-50 flex flex-col items-center justify-center gap-4 bg-[#0d0f17]/90 backdrop-blur-sm p-6 text-center"
-                >
-                    <i class="ti ti-trash text-3xl text-red-400"></i>
-                    <p class="text-sm font-medium text-zinc-200">"{{ project.title }}" is being deleted</p>
-
-                    <button
-                    type="button"
-                    @click.stop.prevent="undoDelete(project)"
-                    class="pointer-events-auto relative z-50 flex items-center gap-2 rounded-lg bg-[#534AB7] px-5 py-2.5 text-sm font-bold text-white shadow-lg shadow-[#534AB7]/40 transition hover:bg-[#6257cf] hover:scale-105 active:scale-95"
+                    <div
+                        v-if="canEdit"
+                        class="absolute right-3 top-3 opacity-0 transition-opacity group-hover:opacity-100"
+                        :class="{ '!opacity-100': openMenuId === project.id }"
                     >
-                    <i class="ti ti-arrow-back-up text-base"></i>
-                    Undo
-                    </button>
-
-                    <div class="h-1 w-32 overflow-hidden rounded-full bg-white/10">
-                    <div class="h-full bg-[#534AB7]" :style="{ animation: 'shrink 5s linear forwards' }"></div>
-                    </div>
-                </div>
-            </div>
-            </article>
-
-            <!-- Shared Projects -->
-            <article
-                v-for="project in sharedProjects"
-                :key="project.id"
-                class="overflow-hidden rounded-xl border border-[#2a2d3a] bg-[#171a26]"
-            >
-                <Link :href="route('projects.show', { project: project.id })">
-                    <div class="h-80 overflow-hidden border-b border-[#2a2d3a]">
-
-                        <img
-                            v-if="project.cover_image"
-                            :src="`/storage/${project.cover_image}`"
-                            :alt="`${project.title} cover`"
-                            class="h-full w-full object-cover object-[center_10%]"
-                        />
+                        <button
+                            @click.stop="openMenuId = openMenuId === project.id ? null : project.id"
+                            class="flex h-8 w-8 items-center justify-center rounded-full bg-black/50 text-zinc-200 backdrop-blur hover:bg-black/70"
+                        >
+                            ⋮
+                        </button>
 
                         <div
-                            v-else
-                            class="flex h-full items-center justify-center bg-gradient-to-br from-[#2a2550] to-[#1a1830]"
+                            v-if="openMenuId === project.id"
+                            class="absolute right-0 mt-1 w-36 overflow-hidden rounded-lg border border-[#2a2d3a] bg-[#1c1f2b] shadow-lg"
                         >
-                            <i class="ti ti-book text-3xl text-[#7F77DD]"></i>
+                            <button
+                                @click.stop="deleteProject(project)"
+                                class="flex w-full items-center gap-2 px-3 py-2 text-left text-sm text-red-400 hover:bg-red-500/10"
+                            >
+                                <i class="ti ti-trash"></i> Delete
+                            </button>
+                        </div>
+                    </div>
+
+                    <div class="p-4">
+                        <div class="mb-2 flex items-start justify-between">
+                            <h2 class="text-base font-medium text-zinc-100">
+                                <Link :href="route('projects.show', { project: project.id })">{{ project.title }}</Link>
+                            </h2>
                         </div>
 
+                        <p class="mb-4 text-sm leading-relaxed text-zinc-400">{{ project.description }}</p>
+
+                        <footer
+                            v-if="!pendingIds.has(project.id)"
+                            class="flex items-center justify-between border-t border-[#232633] pt-3 text-xs text-zinc-500"
+                        >
+                            <span class="flex items-center gap-1">
+                                <i class="ti ti-file-text"></i> {{ project.chapters.length }} chapters
+                            </span>
+                            <span>{{ project.word_count }} words</span>
+                        </footer>
+
+                        <!-- Deletion overlay -->
+                        <div
+                            v-if="pendingIds.has(project.id)"
+                            class="pointer-events-auto absolute inset-0 z-50 flex flex-col items-center justify-center gap-4 bg-[#0d0f17]/90 backdrop-blur-sm p-6 text-center"
+                        >
+                            <i class="ti ti-trash text-3xl text-red-400"></i>
+                            <p class="text-sm font-medium text-zinc-200">"{{ project.title }}" is being deleted</p>
+
+                            <button
+                                type="button"
+                                @click.stop.prevent="undoDelete(project)"
+                                class="pointer-events-auto relative z-50 flex items-center gap-2 rounded-lg bg-[#534AB7] px-5 py-2.5 text-sm font-bold text-white shadow-lg shadow-[#534AB7]/40 transition hover:bg-[#6257cf] hover:scale-105 active:scale-95"
+                            >
+                                <i class="ti ti-arrow-back-up text-base"></i>
+                                Undo
+                            </button>
+
+                            <div class="h-1 w-32 overflow-hidden rounded-full bg-white/10">
+                                <div class="h-full bg-[#534AB7]" :style="{ animation: 'shrink 5s linear forwards' }"></div>
+                            </div>
+                        </div>
                     </div>
-                </Link>
+                </article>
 
-                <div class="p-4">
+                <!-- New Project -->
+                <button v-if="canEdit"
+                    @click="isModalOpen = true"
+                    class="flex flex-col items-center justify-center gap-2 rounded-xl border border-dashed border-[#2e3140] p-8 text-zinc-500 transition hover:border-[#534AB7] hover:text-zinc-300"
+                >
+                    <i class="ti ti-plus text-2xl"></i>
 
-                    <div class="mb-2 flex items-start justify-between">
-                        <h2 class="text-base font-medium text-zinc-100">
-                            <Link :href="route('projects.show', { project: project.id })">
-                                {{ project.title }}
-                            </Link>
-                        </h2>
+                    <span class="text-sm">
+                        Start your next project
+                    </span>
+                </button>
+            </div>
+        </section>
 
-                        <button>
-                            <i class="ti ti-dots text-zinc-500"></i>
-                        </button>
-                    </div>
-
-                    <p class="mb-4 text-sm leading-relaxed text-zinc-400">
-                        {{ project.description }}
-                    </p>
-
-                    <footer
-                        class="flex items-center justify-between border-t border-[#232633] pt-3 text-xs text-zinc-500"
-                    >
-                        <span class="flex items-center gap-1">
-                            <i class="ti ti-file-text"></i>
-                            {{ project.chapters.length }} chapters
-                        </span>
-
-                        <span>{{ project.word_count }} words</span>
-                    </footer>
-
-                </div>
-            </article>
-
-            <!-- New Project -->
-            <button v-if="canEdit"
-            @click="isModalOpen = true"
-                class="flex flex-col items-center justify-center gap-2 rounded-xl border border-dashed border-[#2e3140] p-8 text-zinc-500 transition hover:border-[#534AB7] hover:text-zinc-300"
+        <!-- Shared Projects -->
+        <section v-if="sharedProjects.length > 0" class="mb-8">
+            <h2 class="mb-4 text-lg font-medium text-zinc-100">Shared with Me</h2>
+            
+            <div
+                class="grid grid-cols-[repeat(auto-fit,minmax(280px,1fr))] gap-4"
             >
-                <i class="ti ti-plus text-2xl"></i>
+                <article
+                    v-for="project in sharedProjects"
+                    :key="project.id"
+                    class="overflow-hidden rounded-xl border border-[#2a2d3a] bg-[#171a26]"
+                >
+                    <Link :href="route('projects.show', { project: project.id })">
+                        <div class="h-80 overflow-hidden border-b border-[#2a2d3a]">
 
-                <span class="text-sm">
-                    Start your next project
-                </span>
-            </button>
+                            <img
+                                v-if="project.cover_image"
+                                :src="`/storage/${project.cover_image}`"
+                                :alt="`${project.title} cover`"
+                                class="h-full w-full object-cover object-[center_10%]"
+                            />
 
+                            <div
+                                v-else
+                                class="flex h-full items-center justify-center bg-gradient-to-br from-[#2a2550] to-[#1a1830]"
+                            >
+                                <i class="ti ti-book text-3xl text-[#7F77DD]"></i>
+                            </div>
+
+                        </div>
+                    </Link>
+
+                    <div class="p-4">
+
+                        <div class="mb-2 flex items-start justify-between">
+                            <h2 class="text-base font-medium text-zinc-100">
+                                <Link :href="route('projects.show', { project: project.id })">
+                                    {{ project.title }}
+                                </Link>
+                            </h2>
+
+                            <button>
+                                <i class="ti ti-dots text-zinc-500"></i>
+                            </button>
+                        </div>
+
+                        <p class="mb-4 text-sm leading-relaxed text-zinc-400">
+                            {{ project.description }}
+                        </p>
+
+                        <footer
+                            class="flex items-center justify-between border-t border-[#232633] pt-3 text-xs text-zinc-500"
+                        >
+                            <span class="flex items-center gap-1">
+                                <i class="ti ti-file-text"></i>
+                                {{ project.chapters.length }} chapters
+                            </span>
+
+                            <span>{{ project.word_count }} words</span>
+                        </footer>
+
+                    </div>
+                </article>
+            </div>
         </section>
 
     </div>

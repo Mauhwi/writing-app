@@ -89,13 +89,14 @@ const cardSize = ref('medium')
 <template>
     <div class="min-h-screen bg-[#0b0f17] text-zinc-100">
 
-        <div class="mx-auto max-w-7xl px-6 py-8 space-y-6">
-
+        <div
+            class="mx-auto max-w-7xl px-4 sm:px-6 py-4 md:py-8 space-y-4 md:space-y-6"
+        >
             <ProjectHeader :project="project" :can-edit="canEdit" v-model:cardSize="cardSize"/>
 
             <div
                 v-if="chaptersByPart.length"
-                class="space-y-8"
+                class="space-y-4 md:space-y-8"
             >
                 <PartSection
                     v-for="(part, index) in parts"
