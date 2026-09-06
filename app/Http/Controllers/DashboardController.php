@@ -4,21 +4,34 @@ namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
 use App\Models\User;
+use Illuminate\Support\Facades\Cache;
 
 class DashboardController extends Controller
 {
+
     public function index()
-    {        
-        $projects = auth()->user()
-            ->projects()
-            ->with('chapters')
-            ->get();
+    {
+        $user = auth()->user();
 
-        $sharedProjects = auth()->user()
-            ->sharedProjects()
-            ->with('chapters')
-            ->get();
+        $projects = Cache::remember(
+            "user:{$user->id}:projects",
+            86400,
+            fn () => $user
+                ->projects()
+                ->with('chapters')
+                ->get()
+        );
 
+        $sharedProjects = Cache::remember(
+            "user:{$user->id}:shared-projects",
+            86400,
+            fn () => $user
+                ->sharedProjects()
+                ->with('chapters')
+                ->get()
+        );
+
+        
         foreach ($projects as $project) {
             $project->word_count = $project->chapters->sum('word_count');
         }
@@ -27,16 +40,12 @@ class DashboardController extends Controller
             $sharedProject->word_count = $sharedProject->chapters->sum('word_count');
         }
 
-        $canEdit = false;
-        if (auth()->user()->role === 'author') 
-        {
-            $canEdit = true;
-        }
+        $canEdit = $user->role === 'author';
 
         return inertia('Dashboard', [
             'projects' => $projects,
             'sharedProjects' => $sharedProjects,
-            'canEdit' => $canEdit
+            'canEdit' => $canEdit,
         ]);
     }
 }
