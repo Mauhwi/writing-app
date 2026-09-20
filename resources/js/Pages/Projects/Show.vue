@@ -42,7 +42,6 @@ const unassignedChapters = computed(() =>
 //making sure requests from two different parts don't trigger multiple requests to the server at the same time after reorder.
 let flushScheduled = false
 function handleReordered() {
-    console.log('reordered')
     if (flushScheduled) return
     flushScheduled = true
     nextTick(() => {
@@ -90,13 +89,13 @@ const cardSize = ref('medium')
     <div class="min-h-screen bg-[#0b0f17] text-zinc-100">
 
         <div
-            class="mx-auto max-w-7xl px-4 sm:px-6 py-4 md:py-8 space-y-4 md:space-y-6"
+            class="mx-auto max-w-7xl px-3 sm:px-4 md:px-6 py-3 sm:py-4 md:py-8 space-y-3 sm:space-y-4 md:space-y-6"
         >
             <ProjectHeader :project="project" :can-edit="canEdit" v-model:cardSize="cardSize"/>
 
             <div
                 v-if="chaptersByPart.length"
-                class="space-y-4 md:space-y-8"
+                class="space-y-3 sm:space-y-4 md:space-y-8 pb-6"
             >
                 <PartSection
                     v-for="(part, index) in parts"
@@ -121,7 +120,7 @@ const cardSize = ref('medium')
                 />
             </div>
 
-            <EmptyProject v-else />
+            <EmptyProject v-else class="py-6 sm:py-8" />
 
         </div>
 
