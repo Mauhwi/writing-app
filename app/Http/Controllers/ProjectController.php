@@ -6,6 +6,7 @@ use Illuminate\Http\Request;
 use App\Models\Project;
 use Illuminate\Support\Facades\Storage;
 use App\Models\User;
+use Illuminate\Support\Facades\Cache;
 
 class ProjectController extends Controller
 {
@@ -18,13 +19,11 @@ class ProjectController extends Controller
             'description' => 'nullable|string',
         ]);
 
-        // 2. Create the project
         $request->user()->projects()->create($validated);
-        //Project::create($validated);
 
-        // 3. Redirect back (Inertia automatically handles the refresh)
+        Cache::forget("user:{$request->user()->id}:projects");
+
         return redirect()->back()->with('success', 'Project created.');
-        //return Inertia::flash('success', 'Project created.')->back();
     }
 
     public function delete(Request $request, Project $project)
@@ -32,6 +31,8 @@ class ProjectController extends Controller
         $this->authorize('delete', $project);
 
         $project->delete();
+
+        Cache::forget("user:{$request->user()->id}:projects");
 
         return redirect()->back()->with('success', 'Project '.$project->title .' deleted.');
     }
